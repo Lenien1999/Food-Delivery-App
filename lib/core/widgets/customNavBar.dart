@@ -154,7 +154,7 @@ Future<void> _getCurrentUser() async {
     );
   }
 Widget _buildSelectedPage(int pageIndex) {
-  if (userdata != null && (userdata!.email.contains('cafeteria1') || userdata!.email.contains('cafeteria2'))) {
+  if (userdata != null && (userdata!.email.contains('cafeteria'))) {
     return cafeteriaPages[pageIndex];
   } else {
     return customerPages[pageIndex];
