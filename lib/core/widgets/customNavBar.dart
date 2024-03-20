@@ -31,20 +31,18 @@ class _BuildBottomNavigationState extends State<BuildBottomNavigation> {
   }
 
   UserModel? userdata;
-Future<void> _getCurrentUser() async {
-  if (controller.fireBaseUser.value != null) {
-    await _fetchUserData(controller.fireBaseUser.value!.uid);
-  } else {
-    // Handle the case where fireBaseUser is null
-    print("Firebase user is null");
+  Future<void> _getCurrentUser() async {
+    if (controller.fireBaseUser.value != null) {
+      await _fetchUserData(controller.fireBaseUser.value!.uid);
+    } else {
+      // Handle the case where fireBaseUser is null
+      print("Firebase user is null");
+    }
   }
-}
- 
-
   Future<void> _fetchUserData(String userId) async {
     try {
       FirebaseMethods firebaseMethods = FirebaseMethods();
-      UserModel? userData = await firebaseMethods.getUerData(userId);
+      UserModel? userData = await firebaseMethods.getUerData(userId); // Corrected function name
       setState(() {
         userdata = userData;
       });
@@ -52,6 +50,8 @@ Future<void> _getCurrentUser() async {
       print('Error fetching user data: $e');
     }
   }
+
+  
 
   List<Widget> customerPages = [
     const HomePage(),
@@ -83,84 +83,88 @@ Future<void> _getCurrentUser() async {
                   backgroundImage: ExtendedAssetImageProvider(
                       'assets/images/virtual/vector3.png')),
             ),
-            bottomNavigationBar: SafeArea(
-                child: Container(
-              padding: const EdgeInsets.all(12),
-              margin: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.white),
-                boxShadow: const [
-                  BoxShadow(
-                      color: Color.fromRGBO(0, 0, 0, 0.09),
-                      spreadRadius: 1,
-                      blurRadius: 1,
-                      offset: Offset(0, 1))
-                ],
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  BottomNavWidget(
-                    color: mainscreenController.pageindex == 0
-                        ? Colors.orange
-                        : AppColor.orange,
-                    icon: mainscreenController.pageindex == 0
-                        ? Icons.home
-                        : Icons.home_outlined,
-                    tap: () {
-                      mainscreenController.pageIndex(0);
-                    },
+            bottomNavigationBar:  
+                 SafeArea(
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      margin: const EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.white),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color.fromRGBO(0, 0, 0, 0.09),
+                            spreadRadius: 1,
+                            blurRadius: 1,
+                            offset: Offset(0, 1),
+                          )
+                        ],
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          BottomNavWidget(
+                            color: mainscreenController.pageindex == 0
+                                ? Colors.orange
+                                : AppColor.orange,
+                            icon: mainscreenController.pageindex == 0
+                                ? Icons.home
+                                : Icons.home_outlined,
+                            tap: () {
+                              mainscreenController.pageIndex(0);
+                            },
+                          ),
+                          BottomNavWidget(
+                            color: mainscreenController.pageindex == 1
+                                ? Colors.orange
+                                : AppColor.orange,
+                            icon: mainscreenController.pageindex == 1
+                                ? Icons.restaurant_menu_rounded
+                                : Icons.restaurant_menu_outlined,
+                            tap: () {
+                              mainscreenController.pageIndex(1);
+                            },
+                          ),
+                          BottomNavWidget(
+                            color: mainscreenController.pageindex == 2
+                                ? Colors.orange
+                                : AppColor.orange,
+                            icon: mainscreenController.pageindex == 2
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                            tap: () {
+                              mainscreenController.pageIndex(2);
+                            },
+                          ),
+                          BottomNavWidget(
+                            color: mainscreenController.pageindex == 3
+                                ? Colors.orange
+                                : AppColor.orange,
+                            icon: mainscreenController.pageindex == 3
+                                ? Icons.person
+                                : Icons.person_outline,
+                            tap: () {
+                              mainscreenController.pageIndex(3);
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  BottomNavWidget(
-                    color: mainscreenController.pageindex == 1
-                        ? Colors.orange
-                        : AppColor.orange,
-                    icon: mainscreenController.pageindex == 1
-                        ? Icons.restaurant_menu_rounded
-                        : Icons.restaurant_menu_outlined,
-                    tap: () {
-                      mainscreenController.pageIndex(1);
-                    },
-                  ),
-                  BottomNavWidget(
-                    color: mainscreenController.pageindex == 2
-                        ? Colors.orange
-                        : AppColor.orange,
-                    icon: mainscreenController.pageindex == 2
-                        ? Icons.favorite
-                        : Icons.favorite_border,
-                    tap: () {
-                      mainscreenController.pageIndex(2);
-                    },
-                  ),
-                  BottomNavWidget(
-                    color: mainscreenController.pageindex == 3
-                        ? Colors.orange
-                        : AppColor.orange,
-                    icon: mainscreenController.pageindex == 3
-                        ? Icons.person
-                        : Icons.person_outline,
-                    tap: () {
-                      mainscreenController.pageIndex(3);
-                    },
-                  ),
-                ],
-              ),
-            )),
             body: _buildSelectedPage(mainscreenController.pageindex));
       },
     );
   }
-Widget _buildSelectedPage(int pageIndex) {
-  if (userdata != null && (userdata!.email.contains('cafeteria'))) {
-    return cafeteriaPages[pageIndex];
-  } else {
-    return customerPages[pageIndex];
-  }
-}
 
+  Widget _buildSelectedPage(int pageIndex) {
+    if (userdata != null &&
+        (userdata!.email.contains('cafeteria'))) {
+      return cafeteriaPages[pageIndex];
+    } else {
+      return customerPages[pageIndex];
+    }
+  }
 }
 
 class BottomNavWidget extends StatelessWidget {

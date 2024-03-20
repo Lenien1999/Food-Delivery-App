@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/app_extension.dart';
+import '../../../../core/widgets/app_extension.dart';
 
 class OrderUserInfo extends StatelessWidget {
   const OrderUserInfo({

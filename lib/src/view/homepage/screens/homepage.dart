@@ -1,7 +1,7 @@
 import 'package:badges/badges.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart' hide Badge;
-import 'package:food_delivery_app/core/app_extension.dart';
+import 'package:food_delivery_app/core/widgets/app_extension.dart';
 import 'package:food_delivery_app/core/fire_cloud/auth/auth_controller/authcontroller.dart';
 
 import 'package:food_delivery_app/core/fire_cloud/food/model_controller.dart';

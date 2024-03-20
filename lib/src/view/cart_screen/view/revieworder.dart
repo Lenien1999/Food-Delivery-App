@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food_delivery_app/src/view/foods/widget/total_food_price.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/app_extension.dart';
+import '../../../../core/widgets/app_extension.dart';
 import '../../../../core/state_management/food_provider.dart';
 import '../../../../core/utils/colors.dart';
 import '../../../../core/utils/helpers.dart';

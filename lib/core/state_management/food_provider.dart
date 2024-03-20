@@ -1,9 +1,8 @@
 import 'package:food_delivery_app/core/fire_cloud/food/food_model.dart';
-import 'package:food_delivery_app/core/fire_cloud/food/model_controller.dart';
+
 import 'package:get/get.dart';
 
 class FoodController extends GetxController {
-  List<FoodItem> foodItems = ModelController.foodList.obs;
   RxList<FoodItem> cartfood = <FoodItem>[].obs;
   RxDouble totalPrice = 0.0.obs;
   int pageindex = 0;

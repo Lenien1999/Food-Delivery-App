@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery_app/core/app_extension.dart';
+import 'package:food_delivery_app/core/widgets/app_extension.dart';
 import 'package:food_delivery_app/core/utils/colors.dart';
 
 class ProfilePage extends StatefulWidget {

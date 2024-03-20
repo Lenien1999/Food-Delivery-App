@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:food_delivery_app/core/app_extension.dart';
+import 'package:food_delivery_app/core/widgets/app_extension.dart';
 import 'package:food_delivery_app/core/fire_cloud/food/food_model.dart';
 import 'package:food_delivery_app/core/state_management/food_provider.dart';
 import 'package:food_delivery_app/src/view/cart_screen/widget/order_user_info.dart';

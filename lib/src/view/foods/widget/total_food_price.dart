@@ -1,7 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:food_delivery_app/core/app_extension.dart';
+import 'package:food_delivery_app/core/widgets/app_extension.dart';
 import 'package:food_delivery_app/core/widgets/customNavBar.dart';
 import 'package:food_delivery_app/src/view/cart_screen/view/revieworder.dart';
 

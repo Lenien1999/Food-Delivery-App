@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery_app/core/app_extension.dart';
+import 'package:food_delivery_app/core/widgets/app_extension.dart';
 import 'package:food_delivery_app/core/utils/colors.dart';
 import 'package:food_delivery_app/src/view/order/screen/order_home.dart';
 import 'package:get/get.dart';
@@ -155,73 +155,71 @@ class _CafeHomeState extends State<CafeHome> {
                 ],
               ),
             ),
-            Expanded(
-              child: GridView.builder(
-                  itemCount: 2,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 15,
-                      mainAxisSpacing: 15),
-                  itemBuilder: (context, index) {
-                    return Container(
-                      height: 216,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: const Color.fromRGBO(246, 247, 249, 1),
-                            width: 2,
-                          )),
-                      child: Column(children: [
-                        Expanded(
-                          child: Container(
-                            height: 110,
-                            width: MediaQuery.of(context).size.width,
-                            decoration: const BoxDecoration(
-                                borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(12),
-                                    topLeft: Radius.circular(12))),
-                            child: Image.asset('assets/images/real/user.jpg',
-                                height: 110, fit: BoxFit.fitHeight),
-                          ),
+            GridView.builder(
+                itemCount: 2,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 15,
+                    mainAxisSpacing: 15),
+                itemBuilder: (context, index) {
+                  return Container(
+                    height: 216,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: const Color.fromRGBO(246, 247, 249, 1),
+                          width: 2,
+                        )),
+                    child: Column(children: [
+                      Expanded(
+                        child: Container(
+                          height: 110,
+                          width: MediaQuery.of(context).size.width,
+                          decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(12),
+                                  topLeft: Radius.circular(12))),
+                          child: Image.asset('assets/images/real/user.jpg',
+                              height: 110, fit: BoxFit.fitHeight),
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          'Mosunmola Ayoke',
-                          style: appStyle(
-                              color: AppColor.orange,
-                              fw: FontWeight.w800,
-                              size: 14),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              CircleAvatar(
-                                backgroundColor: AppColor.orange,
-                                child: Icon(
-                                  Icons.call_outlined,
-                                  color: Colors.white,
-                                ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Mosunmola Ayoke',
+                        style: appStyle(
+                            color: AppColor.orange,
+                            fw: FontWeight.w800,
+                            size: 14),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: AppColor.orange,
+                              child: Icon(
+                                Icons.call_outlined,
+                                color: Colors.white,
                               ),
-                              CircleAvatar(
-                                backgroundColor: AppColor.orange,
-                                child: Icon(
-                                  Icons.message,
-                                  color: Colors.white,
-                                ),
+                            ),
+                            CircleAvatar(
+                              backgroundColor: AppColor.orange,
+                              child: Icon(
+                                Icons.message,
+                                color: Colors.white,
                               ),
-                            ],
-                          ),
-                        )
-                      ]),
-                    );
-                  }),
-            )
+                            ),
+                          ],
+                        ),
+                      )
+                    ]),
+                  );
+                })
           ],
         ),
       ),

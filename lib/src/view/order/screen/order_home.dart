@@ -7,7 +7,7 @@ import 'package:food_delivery_app/core/utils/helpers.dart';
 import 'package:food_delivery_app/src/view/order/screen/order_details.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/app_extension.dart';
+import '../../../../core/widgets/app_extension.dart';
 import '../../../../core/utils/colors.dart';
 import '../../../../core/widgets/rich_text.dart';
 import '../../cart_screen/view/cart_page.dart';

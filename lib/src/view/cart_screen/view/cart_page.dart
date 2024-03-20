@@ -1,7 +1,7 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart' hide Badge;
 
-import 'package:food_delivery_app/core/app_extension.dart';
+import 'package:food_delivery_app/core/widgets/app_extension.dart';
 import 'package:food_delivery_app/core/state_management/food_provider.dart';
 import 'package:food_delivery_app/core/utils/colors.dart';
 import 'package:food_delivery_app/core/utils/page_transition.dart';

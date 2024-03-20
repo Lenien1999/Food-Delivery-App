@@ -1,6 +1,6 @@
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:food_delivery_app/core/app_extension.dart';
+import 'package:food_delivery_app/core/widgets/app_extension.dart';
 import 'package:food_delivery_app/src/view/homepage/widgets/caroul_model.dart';
 
 import '../../../../core/utils/colors.dart';

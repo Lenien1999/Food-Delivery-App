@@ -29,15 +29,77 @@ class FoodItem {
       item.quantity = 0;
     }
   }
+
+  // Serialization
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'category': category,
+      'name': name,
+      'price': price,
+      'quantity': quantity,
+      'imageURL': imageURL,
+      'totalPrice': totalPrice,
+      'totalfooditems': totalfooditems,
+      'description': description,
+      'shortDescription': shortDescription, // Added short description
+      'additionalItems': additionalItems.map((item) => item.toJson()).toList(),
+    };
+  }
+
+  // Deserialization
+  factory FoodItem.fromJson(Map<String, dynamic> json) {
+    return FoodItem(
+      id: json['id'],
+      category: json['category'],
+      name: json['name'],
+      price: json['price'],
+      quantity: json['quantity'],
+      imageURL: json['imageURL'],
+      totalPrice: json['totalPrice'],
+      totalfooditems: json['totalfooditems'],
+      description: json['description'],
+      shortDescription: json['shortDescription'], // Added short description
+      additionalItems: (json['additionalItems'] as List<dynamic>)
+          .map((itemJson) => FoodItem.fromJson(itemJson))
+          .toList(),
+    );
+  }
+  static List<FoodItem> fromJsonList(List<dynamic> jsonList) {
+    return jsonList.map((item) => FoodItem.fromJson(item)).toList();
+  }
 }
+
 
 class FoodCategory {
   String categoryName;
   List<FoodItem> foodItems;
   String image;
 
-  FoodCategory(
-      {required this.image,
-      required this.categoryName,
-      required this.foodItems});
+  FoodCategory({
+    required this.categoryName,
+    required this.foodItems,
+    required this.image,
+  });
+
+  // Serialization
+  Map<String, dynamic> toJson() {
+    return {
+      'categoryName': categoryName,
+      'foodItems': foodItems.map((item) => item.toJson()).toList(),
+      'image': image,
+    };
+  }
+
+  // Deserialization
+  factory FoodCategory.fromJson(Map<String, dynamic> json) {
+    return FoodCategory(
+      categoryName: json['categoryName'],
+      foodItems: (json['foodItems'] as List<dynamic>)
+          .map((itemJson) => FoodItem.fromJson(itemJson))
+          .toList(),
+      image: json['image'],
+    );
+  }
 }
+

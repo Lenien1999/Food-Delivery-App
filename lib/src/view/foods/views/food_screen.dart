@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart' hide Badge;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:food_delivery_app/core/app_extension.dart';
+import 'package:food_delivery_app/core/widgets/app_extension.dart';
 import 'package:food_delivery_app/core/fire_cloud/food/food_model.dart';
 import 'package:food_delivery_app/core/fire_cloud/food/model_controller.dart';
 import 'package:food_delivery_app/src/view/cart_screen/view/cart_page.dart';
