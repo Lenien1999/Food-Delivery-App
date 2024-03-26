@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:food_delivery_app/core/widgets/app_extension.dart';
-import 'package:food_delivery_app/core/fire_cloud/food/food_model.dart';
+import 'package:food_delivery_app/core/fire_cloud/food_model/food_model.dart';
 import 'package:food_delivery_app/core/state_management/food_provider.dart';
 import 'package:food_delivery_app/src/view/cart_screen/widget/order_user_info.dart';
 import 'package:get/get.dart';
@@ -281,7 +281,9 @@ class OrderDetails extends StatelessWidget {
                   const SizedBox(
                     height: 15,
                   ),
-                  const OrderUserInfo(),
+                  const OrderUserInfo(
+                    cafe: '',
+                  ),
                   Container(
                     height: 60,
                     margin: const EdgeInsets.all(10),

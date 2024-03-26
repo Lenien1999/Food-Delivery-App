@@ -4,14 +4,12 @@ import 'package:badges/badges.dart';
 import 'package:flutter/material.dart' hide Badge;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_delivery_app/core/widgets/app_extension.dart';
-import 'package:food_delivery_app/core/fire_cloud/food/food_model.dart';
-import 'package:food_delivery_app/core/fire_cloud/food/model_controller.dart';
-import 'package:food_delivery_app/src/view/cart_screen/view/cart_page.dart';
+import 'package:food_delivery_app/core/fire_cloud/food_model/food_model.dart';
+import 'package:food_delivery_app/core/fire_cloud/food_model/model_controller.dart';
 import 'package:food_delivery_app/src/view/foods/views/food_about.dart';
 import 'package:food_delivery_app/core/utils/colors.dart';
 import 'package:food_delivery_app/core/utils/page_transition.dart';
 import 'package:food_delivery_app/core/widgets/rich_text.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/utils/helpers.dart';
@@ -40,9 +38,7 @@ class FoodsScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(right: 20.0),
                 child: InkWell(
-                  onTap: () {
-                    Get.to(() => const CartPage());
-                  },
+                  onTap: () {},
                   child: Badge(
                     badgeStyle: const BadgeStyle(
                         elevation: 2, badgeColor: Colors.orange),

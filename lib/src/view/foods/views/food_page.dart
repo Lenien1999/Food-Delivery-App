@@ -1,7 +1,7 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart' hide Badge;
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:food_delivery_app/core/fire_cloud/food/model_controller.dart';
+import 'package:food_delivery_app/core/fire_cloud/food_model/model_controller.dart';
 
 import 'package:food_delivery_app/core/utils/colors.dart';
 import 'package:food_delivery_app/core/utils/helpers.dart';
@@ -10,8 +10,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/widgets/app_extension.dart';
 import '../../../../../core/widgets/rich_text.dart';
-import '../../cart_screen/view/cart_page.dart';
-
+ 
 class FoodHomePage extends StatelessWidget {
   const FoodHomePage({super.key});
 
@@ -28,7 +27,7 @@ class FoodHomePage extends StatelessWidget {
               padding: const EdgeInsets.only(right: 20.0),
               child: InkWell(
                 onTap: () {
-                  Get.to(() => const CartPage());
+                  
                 },
                 child: Badge(
                   badgeStyle:

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/core/fire_cloud/food_model/food_model.dart';
+
 import 'package:food_delivery_app/src/view/foods/widget/total_food_price.dart';
 import 'package:get/get.dart';
 
@@ -8,15 +10,26 @@ import '../../../../core/utils/colors.dart';
 import '../../../../core/utils/helpers.dart';
 import '../widget/order_user_info.dart';
 
-class RevieOrder extends StatefulWidget {
-  const RevieOrder({super.key});
+class ReviewOrder extends StatefulWidget {
+  final double totalFoodPrice;
+  final FoodItem foodItem;
+  final String cafeteria;
+  final String address;
+  const ReviewOrder(
+      {super.key,
+      required this.cafeteria,
+      required this.address,
+      required this.totalFoodPrice,
+      required this.foodItem});
 
   @override
-  State<RevieOrder> createState() => _RevieOrderState();
+  State<ReviewOrder> createState() => _ReviewOrderState();
 }
 
-class _RevieOrderState extends State<RevieOrder> {
+class _ReviewOrderState extends State<ReviewOrder> {
+  final controller = Get.put(FoodController());
   String _selectedValue = 'Cash on Delivery';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,28 +54,72 @@ class _RevieOrderState extends State<RevieOrder> {
         ),
       ),
       body: GetBuilder<FoodController>(builder: (concontroller) {
+        List<String> additionalItemsWithQuantity = widget
+            .foodItem.additionalItems
+            .where((e) => e.quantity > 0)
+            .map((e) => "${e.quantity} ${e.name}")
+            .toList();
+        // Join names of additional items with a comma
+        String additionalItemsSummary = additionalItemsWithQuantity.join(', ');
         return Column(
           children: [
             Expanded(
               child: ListView(
                 shrinkWrap: true,
                 children: [
-                  const OrderUserInfo(),
-                 const Padding(
-                    padding: EdgeInsets.all(15.0),
-                    child: Divider(
-                      color: Colors.grey,
-                      thickness: 0.7,
-                    ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(left: 10, bottom: 20),
+                    // margin: const EdgeInsets.all(8),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Food Summary',
+                            style: appStyle(
+                                color: Colors.black,
+                                size: 16,
+                                fw: FontWeight.bold),
+                          ),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          Wrap(
+                            children: [
+                              RichText(
+                                  text: TextSpan(
+                                      text: "${widget.foodItem.name} with",
+                                      style: appStyle(
+                                          color: AppColor.orange,
+                                          size: 14,
+                                          fw: FontWeight.bold),
+                                      children: [
+                                    TextSpan(
+                                      text: "  $additionalItemsSummary",
+                                      style: appStyle(
+                                          color: Colors.black,
+                                          size: 12,
+                                          fw: FontWeight.bold),
+                                    )
+                                  ]))
+                            ],
+                          )
+                        ]),
+                  ),
+                  OrderUserInfo(
+                    cafe: widget.cafeteria,
+                  ),
+                  const SizedBox(
+                    height: 20,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 20, left: 20),
                     child: Text(
                       'Payment Method',
                       style: appStyle(
-                          color: AppColor.orange,
-                          size: 16,
-                          fw: FontWeight.bold),
+                          color: Colors.black, size: 16, fw: FontWeight.bold),
                     ),
                   ),
                   Container(
@@ -104,102 +161,21 @@ class _RevieOrderState extends State<RevieOrder> {
                       ),
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.all(15.0),
-                    child: Divider(
-                      color: Colors.grey,
-                      thickness: 0.7,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                color: AppColor.placeholder.withOpacity(0.25),
-                              ),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  "Delivery Instruction",
-                                  style: appStyle(
-                                      color: Colors.black,
-                                      size: 16,
-                                      fw: FontWeight.w500),
-                                ),
-                              ),
-                              TextButton(
-                                  onPressed: () {},
-                                  child: const Row(
-                                    children: [
-                                      Icon(
-                                        Icons.add,
-                                        color: AppColor.orange,
-                                      ),
-                                      Text(
-                                        "Add Notes",
-                                        style: TextStyle(
-                                          color: AppColor.orange,
-                                        ),
-                                      )
-                                    ],
-                                  ))
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                "Delivery Cost",
-                                style: appStyle(
-                                    color: Colors.black,
-                                    size: 16,
-                                    fw: FontWeight.w500),
-                              ),
-                            ),
-                            Text(
-                              "NIG 2",
-                              style: appStyle(
-                                  color: AppColor.orange,
-                                  size: 16,
-                                  fw: FontWeight.w500),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Divider(
-                          color: AppColor.placeholder.withOpacity(0.25),
-                          thickness: 1.5,
-                        ),
-                      ],
-                    ),
-                  )
                 ],
               ).fadeAnimation(0.4),
             ),
             Align(
                 alignment: Alignment.bottomCenter,
                 child: TotalFoodPriceWidget(
-                    item: concontroller.totalPrice.toDouble())),
+                  item: widget.totalFoodPrice,
+                  foodItem: widget.foodItem,
+                  selectedValue: _selectedValue,
+                  cafe: widget.cafeteria,
+                  address: widget.address,
+                )),
           ],
         );
       }),
     );
   }
-
-
 }
-

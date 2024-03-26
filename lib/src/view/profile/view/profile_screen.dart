@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/core/fire_cloud/auth/auth_controller/auth_model.dart';
+import 'package:food_delivery_app/core/fire_cloud/auth/auth_controller/authcontroller.dart';
+import 'package:food_delivery_app/core/fire_cloud/db_controller/user_controller.dart';
 import 'package:food_delivery_app/core/widgets/app_extension.dart';
 import 'package:food_delivery_app/core/utils/colors.dart';
+import 'package:get/get.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -12,6 +16,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(AuthController());
     return Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
@@ -33,117 +38,133 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(14.0),
-          child: ListView(
-            children: [
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.32,
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(64),
-                            child: Image.asset(
-                              'assets/images/real/pizza4.jpg',
-                              height: 100,
-                              width: 100,
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                          const Positioned(
-                              bottom: 0,
-                              right: 2,
-                              child: CircleAvatar(
-                                radius: 25,
-                                backgroundColor: Colors.white,
-                                child: CircleAvatar(
-                                  radius: 23,
-                                  backgroundColor: AppColor.orange,
-                                  child: Icon(
-                                    Icons.edit,
-                                    color: Colors.white,
+        body: StreamBuilder<UserModel?>(
+            stream: FirebaseMethods()
+                .userStream(controller.fireBaseUser.value!.uid),
+            builder: (BuildContext context, snapshot) {
+              UserModel? userData = snapshot.data;
+
+              if (snapshot.hasError) {
+                return const Text('Something went wrong');
+              }
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              return Padding(
+                padding: const EdgeInsets.all(14.0),
+                child: ListView(
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.32,
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(64),
+                                  child: Image.asset(
+                                    'assets/images/real/pizza4.jpg',
+                                    height: 100,
+                                    width: 100,
+                                    fit: BoxFit.fill,
                                   ),
                                 ),
-                              ))
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        'Mayowa Mosun',
+                                const Positioned(
+                                    bottom: 0,
+                                    right: 2,
+                                    child: CircleAvatar(
+                                      radius: 25,
+                                      backgroundColor: Colors.white,
+                                      child: CircleAvatar(
+                                        radius: 23,
+                                        backgroundColor: AppColor.orange,
+                                        child: Icon(
+                                          Icons.edit,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ))
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              userData!.fullName,
+                              style: appStyle(
+                                size: 18,
+                                color: AppColor.orange,
+                                fw: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              userData.email,
+                              style: appStyle(
+                                size: 18,
+                                color: AppColor.primary,
+                                fw: FontWeight.w500,
+                              ),
+                            ),
+                          ]),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          color: const Color.fromRGBO(246, 247, 249, 1),
+                          borderRadius: BorderRadius.circular(23)),
+                      padding: const EdgeInsets.all(17),
+                      child: Text(
+                        'General',
                         style: appStyle(
                           size: 18,
                           color: AppColor.orange,
                           fw: FontWeight.w500,
                         ),
                       ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        'mosun@gmail.com',
-                        style: appStyle(
-                          size: 18,
-                          color: AppColor.primary,
-                          fw: FontWeight.w500,
+                    ),
+                    Column(
+                      children: [
+                        buildContainer('Change Password', Icons.lock),
+                        buildContainer('App Language', Icons.language),
+                        buildContainer('Favourite Service',
+                            Icons.favorite_border_outlined),
+                        buildContainer('Rate Us', Icons.star),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: Container(
+                        height: 50,
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                            color: AppColor.orange,
+                            borderRadius: BorderRadius.circular(12)),
+                        child: TextButton(
+                          onPressed: () async {
+                            await controller.logout();
+                          },
+                          child: Text(
+                            'Logout',
+                            style: appStyle(
+                              size: 18,
+                              color: Colors.white,
+                              fw: FontWeight.w500,
+                            ),
+                          ),
                         ),
                       ),
-                    ]),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                    color: const Color.fromRGBO(246, 247, 249, 1),
-                    borderRadius: BorderRadius.circular(23)),
-                padding: const EdgeInsets.all(17),
-                child: Text(
-                  'General',
-                  style: appStyle(
-                    size: 18,
-                    color: AppColor.orange,
-                    fw: FontWeight.w500,
-                  ),
+                    )
+                  ],
                 ),
-              ),
-              Column(
-                children: [
-                  buildContainer('Change Password', Icons.lock),
-                  buildContainer('App Language', Icons.language),
-                  buildContainer(
-                      'Favourite Service', Icons.favorite_border_outlined),
-                  buildContainer('Rate Us', Icons.star),
-                ],
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(15),
-                child: Container(
-                  height: 50,
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
-                      color: AppColor.orange,
-                      borderRadius: BorderRadius.circular(12)),
-                  child: TextButton(
-                    onPressed: () async {},
-                    child: Text(
-                      'Logout',
-                      style: appStyle(
-                        size: 18,
-                        color: Colors.white,
-                        fw: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-              )
-            ],
-          ),
-        ));
+              );
+            }));
   }
 
   buildContainer(String title, IconData icon) {

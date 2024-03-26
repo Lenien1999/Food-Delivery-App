@@ -48,7 +48,7 @@ class FoodItem {
   }
 
   // Deserialization
-  factory FoodItem.fromJson(Map<String, dynamic> json) {
+  factory FoodItem.fromJson(Map<String, dynamic> json, String id) {
     return FoodItem(
       id: json['id'],
       category: json['category'],
@@ -61,13 +61,11 @@ class FoodItem {
       description: json['description'],
       shortDescription: json['shortDescription'], // Added short description
       additionalItems: (json['additionalItems'] as List<dynamic>)
-          .map((itemJson) => FoodItem.fromJson(itemJson))
+          .map((itemJson) => FoodItem.fromJson(itemJson, id))
           .toList(),
     );
   }
-  static List<FoodItem> fromJsonList(List<dynamic> jsonList) {
-    return jsonList.map((item) => FoodItem.fromJson(item)).toList();
-  }
+ 
 }
 
 
@@ -92,14 +90,14 @@ class FoodCategory {
   }
 
   // Deserialization
-  factory FoodCategory.fromJson(Map<String, dynamic> json) {
-    return FoodCategory(
-      categoryName: json['categoryName'],
-      foodItems: (json['foodItems'] as List<dynamic>)
-          .map((itemJson) => FoodItem.fromJson(itemJson))
-          .toList(),
-      image: json['image'],
-    );
-  }
+  // factory FoodCategory.fromJson(Map<String, dynamic> json) {
+  //   return FoodCategory(
+  //     categoryName: json['categoryName'],
+  //     foodItems: (json['foodItems'] as List<dynamic>)
+  //         .map((itemJson) => FoodItem.fromJson(itemJson ))
+  //         .toList(),
+  //     image: json['image'],
+  //   );
+  // }
 }
 

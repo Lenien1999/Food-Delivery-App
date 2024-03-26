@@ -4,14 +4,12 @@ import 'package:flutter/material.dart' hide Badge;
 import 'package:food_delivery_app/core/widgets/app_extension.dart';
 import 'package:food_delivery_app/core/fire_cloud/auth/auth_controller/authcontroller.dart';
 
-import 'package:food_delivery_app/core/fire_cloud/food/model_controller.dart';
-import 'package:food_delivery_app/src/view/cart_screen/view/cart_page.dart';
+import 'package:food_delivery_app/core/fire_cloud/food_model/model_controller.dart';
 
 import 'package:food_delivery_app/core/utils/colors.dart';
 import 'package:food_delivery_app/core/utils/page_transition.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/state_management/food_provider.dart';
 import '../../../../core/utils/helpers.dart';
 import '../../../../core/widgets/rich_text.dart';
 import '../../../../core/widgets/searchBar.dart';
@@ -241,8 +239,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   AppBar customAppbar() {
-    final controller = Get.put(FoodController());
-
+  
     return AppBar(
       scrolledUnderElevation: 0,
       backgroundColor: Colors.transparent,
@@ -268,13 +265,13 @@ class _HomePageState extends State<HomePage> {
           ),
           InkWell(
             onTap: () {
-              Get.to(() => const CartPage());
+             
             },
             child: Badge(
               badgeStyle: const BadgeStyle(elevation: 2),
-              badgeContent: Text(
-                controller.cartfood.length.toString(),
-                style: const TextStyle(color: Colors.white),
+              badgeContent: const Text(
+                '1',
+                style: TextStyle(color: Colors.white),
               ),
               child: Image.asset(Helper.getAssetName("cart.png", "virtual")),
             ),

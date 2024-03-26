@@ -7,7 +7,6 @@ import 'package:food_delivery_app/core/widgets/customNavBar.dart';
 import 'package:food_delivery_app/src/view/into_screen/onboard.dart';
 import 'package:get/get.dart';
 
-
 import 'auth_model.dart';
 
 class AuthController extends GetxController {
@@ -43,29 +42,48 @@ class AuthController extends GetxController {
       }
     } on FirebaseAuthException catch (e) {
       final error = SignandLoginFailure.code(e.code);
-      Get.snackbar("Error", error.failure,
-          snackPosition: SnackPosition.TOP, backgroundColor: Colors.red);
+      error.showSnackbar();
     } catch (_) {
-      const error = SignandLoginFailure();
-      Get.snackbar("Error", error.failure,
-          snackPosition: SnackPosition.TOP, backgroundColor: Colors.red);
+      const error = SignandLoginFailure('An unknown error has occurred.');
+      error.showSnackbar();
     }
   }
 
   Future<void> signInUser(
       {required String email, required String password}) async {
     try {
-      _auth.signInWithEmailAndPassword(email: email, password: password);
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
+      // If sign-in is successful, navigate to the appropriate screen
+      if (_auth.currentUser != null) {
+        Get.offAll(() => const BuildBottomNavigation());
+      } else {
+        Get.to(() => const OnBoardScreen());
+      }
     } on FirebaseAuthException catch (e) {
-      final error = SignandLoginFailure.code(e.code);
-      Get.snackbar("Error", error.failure,
+      // Display error message using snackbar
+      Get.snackbar("Error", e.message ?? "An error occurred",
           snackPosition: SnackPosition.TOP, backgroundColor: Colors.red);
     } catch (_) {
-      const error = SignandLoginFailure();
-      Get.snackbar("Error", error.failure,
-          snackPosition: SnackPosition.TOP, backgroundColor: Colors.red);
+      // Handle generic errors
+      const error = SignandLoginFailure('An unknown error has occurred.');
+      error.showSnackbar();
     }
   }
+
+  // Future<void> signInUser(
+  //     {required String email, required String password}) async {
+  //   try {
+  //     _auth.signInWithEmailAndPassword(email: email, password: password);
+  //   } on FirebaseAuthException catch (e) {
+  //     final error = SignandLoginFailure.code(e.code);
+  //     Get.snackbar("Error", error.failure,
+  //         snackPosition: SnackPosition.TOP, backgroundColor: Colors.red);
+  //   } catch (_) {
+  //     const error = SignandLoginFailure();
+  //     Get.snackbar("Error", error.failure,
+  //         snackPosition: SnackPosition.TOP, backgroundColor: Colors.red);
+  //   }
+  // }
 
   Future<void> resetPassword(String email, BuildContext context) async {
     showDialog(

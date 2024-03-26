@@ -1,6 +1,7 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart' hide Badge;
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:food_delivery_app/core/fire_cloud/food_model/food_model.dart';
 
 import 'package:food_delivery_app/core/state_management/food_provider.dart';
 import 'package:food_delivery_app/core/utils/helpers.dart';
@@ -10,10 +11,10 @@ import 'package:get/get.dart';
 import '../../../../core/widgets/app_extension.dart';
 import '../../../../core/utils/colors.dart';
 import '../../../../core/widgets/rich_text.dart';
-import '../../cart_screen/view/cart_page.dart';
 
 class OrderHome extends StatefulWidget {
-  const OrderHome({super.key});
+  final FoodItem foodItem;
+  const OrderHome({super.key, required this.foodItem});
 
   @override
   State<OrderHome> createState() => _OrderHomeState();
@@ -34,9 +35,7 @@ class _OrderHomeState extends State<OrderHome> {
             Padding(
               padding: const EdgeInsets.only(right: 20.0),
               child: InkWell(
-                onTap: () {
-                  Get.to(() => const CartPage());
-                },
+                onTap: () {},
                 child: Badge(
                   badgeStyle:
                       const BadgeStyle(elevation: 2, badgeColor: Colors.white),
@@ -99,17 +98,12 @@ class _OrderHomeState extends State<OrderHome> {
                 }),
               ),
             ),
-            Expanded(
-              child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: controller.cartfood.length,
-                  itemBuilder: (context, index) {
-                    final foodItem = controller.cartfood[index];
-                    return InkWell(
+   
+                    
+                     InkWell(
                       onTap: () {
                         Get.to(() => OrderDetails(
-                              foodItem: foodItem,
+                              foodItem: widget.foodItem,
                             ));
                       },
                       child: Container(
@@ -138,7 +132,7 @@ class _OrderHomeState extends State<OrderHome> {
                                 child: Stack(
                                   children: [
                                     Image.asset(
-                                      foodItem.imageURL,
+                                      widget.foodItem.imageURL,
                                       fit: BoxFit.fill,
                                       height: 160,
                                       width: MediaQuery.of(context).size.width,
@@ -158,7 +152,7 @@ class _OrderHomeState extends State<OrderHome> {
                                           child: Padding(
                                             padding: const EdgeInsets.all(5.0),
                                             child: Text(
-                                              foodItem.name,
+                                              widget.foodItem.name,
                                               style: const TextStyle(
                                                   fontSize: 10,
                                                   fontWeight: FontWeight.bold,
@@ -181,7 +175,7 @@ class _OrderHomeState extends State<OrderHome> {
                                             padding: const EdgeInsets.symmetric(
                                                 vertical: 5.0, horizontal: 10),
                                             child: Text(
-                                              "\$${foodItem.price}",
+                                              "\$${widget.foodItem.price}",
                                               style: const TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.white),
@@ -224,7 +218,7 @@ class _OrderHomeState extends State<OrderHome> {
                               child: SizedBox(
                                 width: 310,
                                 child: Text(
-                                  foodItem.shortDescription,
+                                 widget.foodItem.shortDescription,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: appStyle(
@@ -265,9 +259,9 @@ class _OrderHomeState extends State<OrderHome> {
                           ],
                         ),
                       ),
-                    );
-                  }),
-            )
+                    )
+                  ,
+            
           ],
         ),
       ),

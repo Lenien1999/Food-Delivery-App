@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/core/widgets/app_extension.dart';
-import 'package:food_delivery_app/core/fire_cloud/food/food_model.dart';
+import 'package:food_delivery_app/core/fire_cloud/food_model/food_model.dart';
 import 'package:food_delivery_app/core/state_management/food_provider.dart';
 import 'package:get/get.dart';
 import 'package:shadow_clip/shadow_clip.dart';

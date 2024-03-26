@@ -20,7 +20,7 @@ class FirebaseMethods {
     });
   }
 
-  Future<UserModel?> getUerData(String userId) async {
+  Future<UserModel?> getUserData(String userId) async {
     try {
       var snapshot = await usersCollection.doc(userId).get();
 

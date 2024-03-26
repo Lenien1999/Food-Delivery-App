@@ -1,5 +1,6 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/core/fire_cloud/auth/auth_controller/user_data_mixin.dart';
 import 'package:food_delivery_app/core/state_management/food_provider.dart';
 import 'package:food_delivery_app/core/utils/colors.dart';
 
@@ -10,9 +11,7 @@ import 'package:get/get.dart';
 import '../../src/view/homepage/admin_home/adminhompage.dart';
 import '../../src/view/homepage/screens/homepage.dart';
 import '../../src/view/notification/notification_screen.dart';
-import '../fire_cloud/auth/auth_controller/auth_model.dart';
-import '../fire_cloud/auth/auth_controller/authcontroller.dart';
-import '../fire_cloud/db_controller/user_controller.dart';
+ 
 
 class BuildBottomNavigation extends StatefulWidget {
   const BuildBottomNavigation({super.key});
@@ -21,37 +20,9 @@ class BuildBottomNavigation extends StatefulWidget {
   State<BuildBottomNavigation> createState() => _BuildBottomNavigationState();
 }
 
-class _BuildBottomNavigationState extends State<BuildBottomNavigation> {
-  final controller = Get.find<AuthController>();
+class _BuildBottomNavigationState extends State<BuildBottomNavigation> with UserDataMixin {
 
-  @override
-  void initState() {
-    super.initState();
-    _getCurrentUser();
-  }
-
-  UserModel? userdata;
-  Future<void> _getCurrentUser() async {
-    if (controller.fireBaseUser.value != null) {
-      await _fetchUserData(controller.fireBaseUser.value!.uid);
-    } else {
-      // Handle the case where fireBaseUser is null
-      print("Firebase user is null");
-    }
-  }
-  Future<void> _fetchUserData(String userId) async {
-    try {
-      FirebaseMethods firebaseMethods = FirebaseMethods();
-      UserModel? userData = await firebaseMethods.getUerData(userId); // Corrected function name
-      setState(() {
-        userdata = userData;
-      });
-    } catch (e) {
-      print('Error fetching user data: $e');
-    }
-  }
-
-  
+   
 
   List<Widget> customerPages = [
     const HomePage(),

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery_app/core/fire_cloud/food/food_model.dart';
+import 'package:food_delivery_app/core/fire_cloud/auth/auth_controller/authcontroller.dart';
+import 'package:food_delivery_app/core/fire_cloud/db_controller/food_controller.dart';
+import 'package:food_delivery_app/core/fire_cloud/food_model/food_model.dart';
 import 'package:food_delivery_app/core/state_management/food_provider.dart';
-import 'package:food_delivery_app/src/view/cart_screen/view/cart_page.dart';
+import 'package:food_delivery_app/core/widgets/app_extension.dart';
+import 'package:food_delivery_app/core/widgets/customTextInput.dart';
+import 'package:food_delivery_app/src/view/cart_screen/view/revieworder.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/utils/colors.dart';
@@ -19,9 +23,138 @@ class FoodPackagePrice extends StatefulWidget {
 }
 
 class _FoodPackagePriceState extends State<FoodPackagePrice> {
+  String selectedCafeteria = '';
+  TextEditingController destinationController = TextEditingController();
+  final controller = Get.put(FoodController());
+  final foodDbController = Get.put(FoodDbController());
+  final authController = Get.put(AuthController());
+  @override
+  void initState() {
+    super.initState();
+    destinationController = TextEditingController();
+  }
+
+  List<String> cafeteriaOptions = [
+    'ASO Cafeteria',
+    'Male Uni Cafeteria',
+    'Female Uni Cafeteria',
+    'Eng Building Cafe',
+  ];
+
+  void _selectCafeteria(String cafeteria) {
+    setState(() {
+      selectedCafeteria = cafeteria;
+    });
+    Navigator.of(context).pop(); // Close the modal bottom sheet
+    _showCafeteriaBottomSheet(); // Reopen the modal bottom sheet with updated selection
+  }
+
+  void _showCafeteriaBottomSheet() {
+    showModalBottomSheet(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      isScrollControlled: true,
+      isDismissible: false,
+      context: context,
+      builder: (context) {
+        return SizedBox(
+          height: Helper.getScreenHeight(context) * 0.7,
+          child: Column(
+            children: [
+              const SizedBox(height: 15),
+              Center(
+                child: Text(
+                  "Cafeteria & Address",
+                  style: appStyle(
+                    color: AppColor.orange,
+                    size: 18,
+                    fw: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20.0,
+                ),
+                child: Divider(
+                  color: AppColor.placeholder.withOpacity(0.5),
+                  thickness: 1.5,
+                  height: 40,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20.0,
+                ),
+                child: CustomTextInput(
+                  hintText: "Enter Destination",
+                  controller: destinationController,
+                  prefixIcon: Icons.location_on,
+                ),
+              ),
+              const SizedBox(height: 30),
+              Column(
+                children: cafeteriaOptions.map((cafeteria) {
+                  return RadioListTile<String>(
+                    title: Text(cafeteria),
+                    value: cafeteria,
+                    groupValue: selectedCafeteria,
+                    onChanged: (value) {
+                      _selectCafeteria(value!);
+                    },
+                  );
+                }).toList(),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20.0,
+                ),
+                child: SizedBox(
+                  height: 50,
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColor.orange,
+                    ),
+                    onPressed: () {
+                      if (selectedCafeteria.isEmpty ||
+                          destinationController.text.isEmpty) {
+                        // Show error message if either cafeteria or address is empty
+                        Get.snackbar('Error',
+                            "Please select cafeteria and enter destination.",
+                            backgroundColor: AppColor.orange,
+                            snackPosition: SnackPosition.TOP);
+                      } else {
+                        // Proceed to the next screen
+                        Get.to(() => ReviewOrder(
+                              cafeteria: selectedCafeteria,
+                              address: destinationController.text,
+                              totalFoodPrice: widget.items.totalfooditems,
+                              foodItem: widget.items,
+                            ));
+                      }
+                    },
+                    child: Text(
+                      "Continue",
+                      style: appStyle(
+                        color: Colors.white,
+                        size: 18,
+                        fw: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(FoodController());
     // Calculate the total price of additional items
     double additionalItemsPrice = widget.items.additionalItems.fold(
         0,
@@ -100,9 +233,7 @@ class _FoodPackagePriceState extends State<FoodPackagePrice> {
                     SizedBox(
                       width: Helper.getScreenWidth(context) * 0.5,
                       child: ElevatedButton(
-                          onPressed: () {
-                            controller.addToCart(widget.items);
-                          },
+                          onPressed: _showCafeteriaBottomSheet,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -111,7 +242,7 @@ class _FoodPackagePriceState extends State<FoodPackagePrice> {
                                     "add_to_cart.png", "virtual"),
                               ),
                               const Text(
-                                "Add to Cart",
+                                "Checkout",
                               )
                             ],
                           )),
@@ -142,9 +273,7 @@ class _FoodPackagePriceState extends State<FoodPackagePrice> {
                   shape: const CircleBorder(),
                 ),
                 child: InkWell(
-                  onTap: () {
-                    Get.to(() => const CartPage());
-                  },
+                  onTap: () {},
                   child: Image.asset(
                     Helper.getAssetName("cart_filled.png", "virtual"),
                   ),

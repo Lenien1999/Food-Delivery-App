@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 class SignandLoginFailure {
   final String failure;
 
-  const SignandLoginFailure([this.failure = 'An unknown error as occurred']);
+  const SignandLoginFailure(this.failure);
 
   factory SignandLoginFailure.code(String code) {
     String errorMessage;
@@ -22,22 +22,25 @@ class SignandLoginFailure {
         errorMessage = "Operation not allowed, please contact support.";
         break;
       case 'user-disabled':
-        errorMessage = "This user has been disabled, please contact support for help.";
+        errorMessage =
+            "This user has been disabled, please contact support for help.";
         break;
       default:
         errorMessage = "An unknown error has occurred.";
         break;
     }
-    
-    // Display the error message in a snack bar
+
+    return SignandLoginFailure(errorMessage);
+  }
+
+  // Method to display the error message using a snackbar
+  void showSnackbar() {
     Get.snackbar(
       "Error",
-      errorMessage,
+      failure,
       snackPosition: SnackPosition.BOTTOM, // Position of the snack bar
       backgroundColor: Colors.red, // Customize the background color
       colorText: Colors.white, // Customize the text color
     );
-
-    return SignandLoginFailure(errorMessage);
   }
 }
