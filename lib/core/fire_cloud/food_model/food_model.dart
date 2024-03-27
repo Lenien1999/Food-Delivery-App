@@ -50,24 +50,34 @@ class FoodItem {
   // Deserialization
   factory FoodItem.fromJson(Map<String, dynamic> json, String id) {
     return FoodItem(
-      id: json['id'],
-      category: json['category'],
-      name: json['name'],
-      price: json['price'],
-      quantity: json['quantity'],
-      imageURL: json['imageURL'],
-      totalPrice: json['totalPrice'],
-      totalfooditems: json['totalfooditems'],
-      description: json['description'],
-      shortDescription: json['shortDescription'], // Added short description
-      additionalItems: (json['additionalItems'] as List<dynamic>)
-          .map((itemJson) => FoodItem.fromJson(itemJson, id))
-          .toList(),
+      id: id, // Assuming you want to use the parameter 'id' instead of json['id']
+      category: json['category'] ?? "",
+      name: json['name'] ?? "",
+      price: json['price'] != null
+          ? double.tryParse(json['price'].toString()) ?? 0.0
+          : 0.0,
+      quantity: json['quantity'] != null
+          ? int.tryParse(json['quantity'].toString()) ?? 0
+          : 0,
+      imageURL: json['imageURL'] ?? "",
+      totalPrice: json['totalPrice'] != null
+          ? double.tryParse(json['totalPrice'].toString()) ?? 0.0
+          : 0.0,
+      totalfooditems: json['totalfooditems'] != null
+          ? double.tryParse(json['totalfooditems'].toString()) ?? 0.0
+          : 0.0,
+      description: json['description'] ?? "",
+      shortDescription:
+          json['shortDescription'] ?? "", // Added short description
+      additionalItems: json['additionalItems'] != null
+          ? (json['additionalItems'] as List<dynamic>)
+              .map((itemJson) => FoodItem.fromJson(
+                  itemJson as Map<String, dynamic>, itemJson['id'] ?? ""))
+              .toList()
+          : [],
     );
   }
- 
 }
-
 
 class FoodCategory {
   String categoryName;
@@ -100,4 +110,3 @@ class FoodCategory {
   //   );
   // }
 }
-

@@ -8,7 +8,6 @@ import 'package:food_delivery_app/core/fire_cloud/food_model/order_model.dart';
 
 import 'package:food_delivery_app/core/state_management/food_provider.dart';
 import 'package:food_delivery_app/core/widgets/app_extension.dart';
-import 'package:food_delivery_app/core/widgets/customNavBar.dart';
 
 import 'package:get/get.dart';
 import '../../../../core/utils/colors.dart';

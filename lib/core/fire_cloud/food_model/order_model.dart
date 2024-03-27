@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/fire_cloud/food_model/food_model.dart';
+
 class Orders {
   String? id;
   String userId;
@@ -10,8 +11,10 @@ class Orders {
   String address;
   bool isDelivered;
   bool isRejected;
+  bool isConfirmed;
 
   Orders({
+    this.isConfirmed = false,
     this.id,
     this.isDelivered = false,
     this.isRejected = false,
@@ -27,10 +30,11 @@ class Orders {
     return {
       'userId': userId,
       'date': date,
+      'isConfirmed': isConfirmed,
       'isDelivered': isDelivered,
       'isRejected': isRejected,
       'cafeteria': cafeteria,
-      'cartFood':  cartFood.toJson(),
+      'cartFood': cartFood.toJson(),
       'address': address,
       'cancellationTimestamp': cancellationTimestamp,
     };
@@ -38,17 +42,17 @@ class Orders {
 
   factory Orders.fromJson(Map<String, dynamic> data, String id) {
     return Orders(
-      id: id,
-      address: data['address'] ?? " ",
-      cafeteria: data['cafeteria'] ?? '',
-      userId: data['userId'] ?? '',
-      cancellationTimestamp:
-          (data['cancellationTimestamp'] as Timestamp?)?.toDate() ??
-              DateTime.now(),
-      isDelivered: data['isDelivered'] ?? false,
-      isRejected: data['isRejected'] ?? false,
-      date: (data['date'] as Timestamp?)?.toDate() ?? DateTime.now(),
-      cartFood: FoodItem.fromJson(data['foodItem'] ?? {}, id)
-    );
+        id: id,
+        address: data['address'] ?? " ",
+        cafeteria: data['cafeteria'] ?? '',
+        userId: data['userId'] ?? '',
+        isConfirmed: data['isConfirmed'] ?? false,
+        cancellationTimestamp:
+            (data['cancellationTimestamp'] as Timestamp?)?.toDate() ??
+                DateTime.now(),
+        isDelivered: data['isDelivered'] ?? false,
+        isRejected: data['isRejected'] ?? false,
+        date: (data['date'] as Timestamp?)?.toDate() ?? DateTime.now(),
+        cartFood: FoodItem.fromJson(data['foodItem'] ?? {}, id));
   }
 }
