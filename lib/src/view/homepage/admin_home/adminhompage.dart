@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/core/widgets/app_extension.dart';
 import 'package:food_delivery_app/core/utils/colors.dart';
- 
+import 'package:food_delivery_app/src/view/order/screen/order_home.dart';
+import 'package:get/get.dart';
+
+import '../../../../core/fire_cloud/auth/auth_controller/user_data_mixin.dart';
+
 class CafeHome extends StatefulWidget {
   const CafeHome({super.key});
 
@@ -9,7 +13,7 @@ class CafeHome extends StatefulWidget {
   State<CafeHome> createState() => _CafeHomeState();
 }
 
-class _CafeHomeState extends State<CafeHome> {
+class _CafeHomeState extends State<CafeHome> with UserDataMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,10 +64,10 @@ class _CafeHomeState extends State<CafeHome> {
                                 fw: FontWeight.w500,
                                 size: 14,
                               ),
-                              children: const [
+                              children: [
                             TextSpan(
-                                text: '  Aso Cafeteria',
-                                style: TextStyle(
+                                text: '  ${userdata?.fullName}',
+                                style: const TextStyle(
                                   color: AppColor.orange,
                                   fontWeight: FontWeight.w600,
                                   fontSize: 14,
@@ -103,8 +107,13 @@ class _CafeHomeState extends State<CafeHome> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Expanded(
-                  child: buildCafeInfo(
-                      '90', ' Total Order', Icons.my_library_books_outlined),
+                  child: InkWell(
+                    onTap: () {
+                      Get.to(() => const OrderHome());
+                    },
+                    child: buildCafeInfo(
+                        '90', ' Total Order', Icons.my_library_books_outlined),
+                  ),
                 ),
                 const SizedBox(
                   width: 5,

@@ -14,18 +14,18 @@ import '../../../../core/utils/colors.dart';
 import '../../../../core/utils/helpers.dart';
 
 class TotalFoodPriceWidget extends StatefulWidget {
-  final double item;
+  final double totalfoodprice;
   final String selectedValue;
   final FoodItem foodItem;
   final String cafe;
   final String address;
   const TotalFoodPriceWidget({
     super.key,
-    required this.item,
     required this.foodItem,
     required this.selectedValue,
     required this.cafe,
     required this.address,
+    required this.totalfoodprice,
   });
 
   @override
@@ -108,9 +108,12 @@ class _TotalFoodPriceWidgetState extends State<TotalFoodPriceWidget> {
                                     .where((item) => item.quantity > 0)
                                     .toList();
                                 final order = Orders(
+                                  status: OrderStatus.received,
                                   address: widget.address,
                                   cafeteria: widget.cafe,
                                   cartFood: FoodItem(
+                                      totalPrice: widget.foodItem.price,
+                                      totalfooditems: widget.totalfoodprice,
                                       additionalItems: filteredAdditionalItems,
                                       category: widget.foodItem.category,
                                       name: widget.foodItem.name,
@@ -239,7 +242,7 @@ class _TotalFoodPriceWidgetState extends State<TotalFoodPriceWidget> {
                       height: 2,
                     ),
                     Text(
-                      widget.item.toStringAsFixed(2),
+                      widget.totalfoodprice.toStringAsFixed(2),
                       style: const TextStyle(
                         color: AppColor.primary,
                         fontWeight: FontWeight.bold,

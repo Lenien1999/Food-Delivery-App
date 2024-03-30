@@ -7,7 +7,9 @@ import 'package:get/get.dart';
 import '../../../core/fire_cloud/auth/auth_controller/auth_model.dart';
 import '../../../core/fire_cloud/db_controller/user_controller.dart';
 import '../../../core/utils/colors.dart';
+import '../../../core/widgets/app_extension.dart';
 import '../../../core/widgets/rich_text.dart';
+import '../foods/views/food_page.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({Key? key}) : super(key: key);
@@ -51,69 +53,132 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            scrolledUnderElevation: 0.0,
-            iconTheme: const IconThemeData(color: Colors.white),
-            backgroundColor: AppColor.orange,
-            centerTitle: true,
-            title: const AppRichText(
-                title: 'Cafe',
-                subtitle: 'Notification',
-                subColor: Colors.white)),
-        body: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('order')
-                .where('userId', isEqualTo: _userData?.id)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              }
-   final orders = snapshot.data!.docs
-                  .map((doc) => Orders.fromJson(
-                      doc.data() as Map<String, dynamic>, doc.id))
-                  .toList();
+      appBar: AppBar(
+        scrolledUnderElevation: 0.0,
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: AppColor.orange,
+        centerTitle: true,
+        title: const AppRichText(
+          title: 'Cafe',
+          subtitle: 'Notification',
+          subColor: Colors.white,
+        ),
+      ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('order')
+            .where('userId', isEqualTo: _userData?.id)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          final orders = snapshot.data!.docs
+              .map((doc) =>
+                  Orders.fromJson(doc.data() as Map<String, dynamic>, doc.id))
+              .toList();
+          if (orders.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset('assets/images/virtual/vector2.png'),
+                  Text(
+                    'No notifications yet',
+                    style: appStyle(
+                      color: AppColor.placeholder,
+                      size: 18,
+                      fw: FontWeight.bold,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Get.to(() => const FoodHomePage());
+                    },
+                    child: Text(
+                      'Place Your Order',
+                      style: appStyle(
+                        color: AppColor.orange,
+                        size: 18,
+                        fw: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+          return ListView.builder(
+            itemCount: orders.length,
+            itemBuilder: (context, index) {
+              final order = orders[index];
+              // Generate notifications for each order status.
+              List<Widget> notifications =
+                  _buildOrderStatusNotifications(order);
 
-              return ListView.builder(
-                  itemCount: orders.length,
-                  itemBuilder: (context, index) {
-                    final order = orders[index];
-                    // Generate notifications for each order status.
-                    List<Widget> notifications =
-                        _buildOrderStatusNotifications(order);
-
-                    return Container(
-                        margin: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border:
-                                Border.all(color: AppColor.orange, width: 1)),
-                        child: Column(children: notifications));
-                  });
-            }));
+              return Container(
+                margin: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: AppColor.orange, width: 1),
+                ),
+                child: Column(
+                  children: notifications,
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
   }
 
   List<Widget> _buildOrderStatusNotifications(Orders order) {
     List<Widget> notifications = [];
 
     // Generate a notification tile for each status that is true.
-    if (order.isConfirmed) {
-      notifications.add(_buildNotificationTile("Order Confirmed",
-          "Your order has been confirmed.", Icons.check, Colors.blue));
+    if (order.status == OrderStatus.received) {
+      notifications.add(
+        _buildNotificationTile(
+          "Order Received",
+          "Your order has been received.",
+          Icons.check,
+          Colors.blue,
+        ),
+      );
     }
-    if (order.isRejected) {
-      notifications.add(_buildNotificationTile("Order Rejected",
-          "Sorry, your order was rejected.", Icons.close, Colors.red));
+    if (order.status == OrderStatus.preparing) {
+      notifications.add(
+        _buildNotificationTile(
+          "Order Preparing",
+          "Your order is being prepared.",
+          Icons.hourglass_bottom,
+          Colors.orange,
+        ),
+      );
     }
-    if (order.isDelivered) {
-      notifications.add(_buildNotificationTile(
+    if (order.status == OrderStatus.enRoute) {
+      notifications.add(
+        _buildNotificationTile(
+          "Order En Route",
+          "Your order is en route for delivery.",
+          Icons.local_shipping,
+          Colors.green,
+        ),
+      );
+    }
+    if (order.status == OrderStatus.delivered) {
+      notifications.add(
+        _buildNotificationTile(
           "Order Delivered",
           "Your order has been delivered.",
-          Icons.local_shipping,
-          Colors.green));
+          Icons.delivery_dining,
+          Colors.purple,
+        ),
+      );
     }
 
     return notifications;
@@ -123,8 +188,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
       String title, String subtitle, IconData icon, Color color) {
     return ListTile(
       leading: Icon(icon, color: color),
-      title: Text(title,
-          style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+      title: Text(
+        title,
+        style: TextStyle(color: color, fontWeight: FontWeight.bold),
+      ),
       subtitle: Text(subtitle),
     );
   }

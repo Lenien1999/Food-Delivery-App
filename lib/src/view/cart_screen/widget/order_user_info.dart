@@ -1,4 +1,3 @@
- 
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/core/fire_cloud/auth/auth_controller/auth_model.dart';
 import 'package:food_delivery_app/core/fire_cloud/auth/auth_controller/authcontroller.dart';
@@ -9,13 +8,14 @@ import '../../../../core/widgets/app_extension.dart';
 
 class OrderUserInfo extends StatelessWidget {
   final String cafe;
+  final String address;
   const OrderUserInfo({
-    super.key, required this.cafe,
+    super.key,
+    required this.cafe, required this.address,
   });
 
   @override
   Widget build(BuildContext context) {
- 
     final controller = Get.put(AuthController());
 
     return StreamBuilder<UserModel?>(
@@ -67,13 +67,20 @@ class OrderUserInfo extends StatelessWidget {
                             height: 5,
                           ),
                           orderDetails(
-                              title: 'Phone ', subtitle: '  ${userData.phoneNo}'),
+                              title: 'Phone ',
+                              subtitle: '  ${userData.phoneNo}'),
                           const SizedBox(
                             height: 5,
                           ),
                           orderDetails(
-                              title: 'Order Address:',
-                              subtitle: '  $cafe hostel block F')
+                              title: 'Cafeteria:',
+                              subtitle: '  $cafe Cafeteria'),
+                                const SizedBox(
+                            height: 5,
+                          ),
+                              orderDetails(
+                              title: 'Address:',
+                              subtitle: '  $address')
                         ],
                       ),
                       IconButton(

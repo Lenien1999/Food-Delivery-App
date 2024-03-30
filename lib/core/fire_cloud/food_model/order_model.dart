@@ -1,6 +1,31 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/fire_cloud/food_model/food_model.dart';
 
+// Define the enum for OrderStatus
+enum OrderStatus { received, preparing, enRoute, delivered }
+
+// Implement the toJson and fromJson methods for the enum
+extension OrderStatusExtension on OrderStatus {
+  String toJson() {
+    return toString().split('.').last;
+  }
+
+  static OrderStatus fromJson(String json) {
+    switch (json) {
+      case 'received':
+        return OrderStatus.received;
+      case 'preparing':
+        return OrderStatus.preparing;
+      case 'enRoute':
+        return OrderStatus.enRoute;
+      case 'delivered':
+        return OrderStatus.delivered;
+      default:
+        throw ArgumentError('Invalid OrderStatus: $json');
+    }
+  }
+}
+
 class Orders {
   String? id;
   String userId;
@@ -8,16 +33,12 @@ class Orders {
   FoodItem cartFood;
   DateTime date;
   String cafeteria;
+  final OrderStatus status;
   String address;
-  bool isDelivered;
-  bool isRejected;
-  bool isConfirmed;
 
   Orders({
-    this.isConfirmed = false,
     this.id,
-    this.isDelivered = false,
-    this.isRejected = false,
+    required this.status,
     required this.address,
     required this.cafeteria,
     required this.cartFood,
@@ -30,11 +51,11 @@ class Orders {
     return {
       'userId': userId,
       'date': date,
-      'isConfirmed': isConfirmed,
-      'isDelivered': isDelivered,
-      'isRejected': isRejected,
+
       'cafeteria': cafeteria,
       'cartFood': cartFood.toJson(),
+      'status': status.toJson(), // Serialize enum using its toJson method
+
       'address': address,
       'cancellationTimestamp': cancellationTimestamp,
     };
@@ -43,16 +64,16 @@ class Orders {
   factory Orders.fromJson(Map<String, dynamic> data, String id) {
     return Orders(
         id: id,
+        status: data['status'] != null
+            ? OrderStatusExtension.fromJson(data['status'])
+            : OrderStatus.received,
         address: data['address'] ?? " ",
         cafeteria: data['cafeteria'] ?? '',
         userId: data['userId'] ?? '',
-        isConfirmed: data['isConfirmed'] ?? false,
         cancellationTimestamp:
             (data['cancellationTimestamp'] as Timestamp?)?.toDate() ??
                 DateTime.now(),
-        isDelivered: data['isDelivered'] ?? false,
-        isRejected: data['isRejected'] ?? false,
         date: (data['date'] as Timestamp?)?.toDate() ?? DateTime.now(),
-        cartFood: FoodItem.fromJson(data['foodItem'] ?? {}, id));
+        cartFood: FoodItem.fromJson(data['cartFood'] ?? {}, id));
   }
 }

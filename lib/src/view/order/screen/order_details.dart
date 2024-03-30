@@ -114,7 +114,7 @@ class OrderDetails extends StatelessWidget {
                             children: [
                               const SizedBox(height: 20),
                               Text(
-                                "NGN ${foodItem.totalPrice.toStringAsFixed(0)}",
+                                "NGN ${foodItem.totalPrice}",
                                 style: const TextStyle(
                                   color: AppColor.primary,
                                   fontSize: 30,
@@ -219,7 +219,7 @@ class OrderDetails extends StatelessWidget {
                             runSpacing: 20,
                             children:
                                 foodItem.additionalItems.map((additionalItem) {
-                              return additionalItem.quantity != 0
+                              return additionalItem.quantity == 0
                                   ? Container(
                                       height: Helper.getScreenHeight(context) *
                                           0.22,
@@ -283,6 +283,7 @@ class OrderDetails extends StatelessWidget {
                   ),
                   const OrderUserInfo(
                     cafe: '',
+                    address: '',
                   ),
                   Container(
                     height: 60,

@@ -50,7 +50,7 @@ class FoodItem {
   // Deserialization
   factory FoodItem.fromJson(Map<String, dynamic> json, String id) {
     return FoodItem(
-      id: id, // Assuming you want to use the parameter 'id' instead of json['id']
+       // Assuming you want to use the parameter 'id' instead of json['id']
       category: json['category'] ?? "",
       name: json['name'] ?? "",
       price: json['price'] != null

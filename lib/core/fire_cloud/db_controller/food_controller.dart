@@ -46,23 +46,23 @@ class FoodDbController {
     });
   }
 
-  Future<void> markOrderAsComplete(Orders orders) async {
-    _collectionReference.doc(orders.id).update({
-      "isDelivered": orders.isDelivered,
-      "cancellationTimestamp": orders.isDelivered
-          ? DateTime.now() // Set cancellation timestamp only when canceled
-          : null, // Clear cancellation timestamp if not canceled
-    });
-  }
+  // Future<void> markOrderAsComplete(Orders orders) async {
+  //   _collectionReference.doc(orders.id).update({
+  //     "isDelivered": orders.isDelivered,
+  //     "cancellationTimestamp": orders.isDelivered
+  //         ? DateTime.now() // Set cancellation timestamp only when canceled
+  //         : null, // Clear cancellation timestamp if not canceled
+  //   });
+  // }
 
-  Future<void> markOrderAsRejected(Orders orders) async {
-    _collectionReference.doc(orders.id).update({
-      "isCancelled": orders.isRejected,
-      "cancellationTimestamp": orders.isRejected
-          ? DateTime.now() // Set cancellation timestamp only when canceled
-          : null, // Clear cancellation timestamp if not canceled
-    });
-  }
+  // Future<void> markOrderAsRejected(Orders orders) async {
+  //   _collectionReference.doc(orders.id).update({
+  //     "isCancelled": orders.isRejected,
+  //     "cancellationTimestamp": orders.isRejected
+  //         ? DateTime.now() // Set cancellation timestamp only when canceled
+  //         : null, // Clear cancellation timestamp if not canceled
+  //   });
+  // }
 
   Stream<List<Orders>> rejectOrderList() {
     return _collectionReference

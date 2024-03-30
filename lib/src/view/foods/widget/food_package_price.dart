@@ -12,6 +12,7 @@ import '../../../../core/utils/colors.dart';
 import '../../../../core/utils/helpers.dart';
 
 class FoodPackagePrice extends StatefulWidget {
+  
   final FoodItem items;
   const FoodPackagePrice({
     super.key,
@@ -35,10 +36,10 @@ class _FoodPackagePriceState extends State<FoodPackagePrice> {
   }
 
   List<String> cafeteriaOptions = [
-    'ASO Cafeteria',
-    'Male Uni Cafeteria',
-    'Female Uni Cafeteria',
-    'Eng Building Cafe',
+    'ASO',
+    'Male University',
+    'Female University',
+    'Engneering Building',
   ];
 
   void _selectCafeteria(String cafeteria) {
@@ -131,7 +132,7 @@ class _FoodPackagePriceState extends State<FoodPackagePrice> {
                               cafeteria: selectedCafeteria,
                               address: destinationController.text,
                               totalFoodPrice: widget.items.totalfooditems,
-                              foodItem: widget.items,
+                              foodItem: widget.items,  
                             ));
                       }
                     },

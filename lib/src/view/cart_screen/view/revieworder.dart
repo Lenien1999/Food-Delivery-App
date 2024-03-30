@@ -12,6 +12,7 @@ import '../widget/order_user_info.dart';
 
 class ReviewOrder extends StatefulWidget {
   final double totalFoodPrice;
+   
   final FoodItem foodItem;
   final String cafeteria;
   final String address;
@@ -20,7 +21,7 @@ class ReviewOrder extends StatefulWidget {
       required this.cafeteria,
       required this.address,
       required this.totalFoodPrice,
-      required this.foodItem});
+      required this.foodItem, });
 
   @override
   State<ReviewOrder> createState() => _ReviewOrderState();
@@ -110,6 +111,7 @@ class _ReviewOrderState extends State<ReviewOrder> {
                   ),
                   OrderUserInfo(
                     cafe: widget.cafeteria,
+                    address: widget.address,
                   ),
                   const SizedBox(
                     height: 20,
@@ -167,11 +169,12 @@ class _ReviewOrderState extends State<ReviewOrder> {
             Align(
                 alignment: Alignment.bottomCenter,
                 child: TotalFoodPriceWidget(
-                  item: widget.totalFoodPrice,
+                  totalfoodprice: widget.totalFoodPrice,
                   foodItem: widget.foodItem,
                   selectedValue: _selectedValue,
                   cafe: widget.cafeteria,
                   address: widget.address,
+                 
                 )),
           ],
         );
