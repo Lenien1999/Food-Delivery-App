@@ -150,16 +150,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         ),
       );
     }
-    if (order.status == OrderStatus.preparing) {
-      notifications.add(
-        _buildNotificationTile(
-          "Order Preparing",
-          "Your order is being prepared.",
-          Icons.hourglass_bottom,
-          Colors.orange,
-        ),
-      );
-    }
+  
     if (order.status == OrderStatus.enRoute) {
       notifications.add(
         _buildNotificationTile(

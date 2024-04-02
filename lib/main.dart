@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/core/fire_cloud/db_controller/food_controller.dart';
 import 'package:food_delivery_app/core/state_management/food_provider.dart';
 import 'package:food_delivery_app/firebase_options.dart';
 
@@ -19,7 +20,7 @@ Future<void> main() async {
   // Register the controllers with GetX
   Get.put(AuthController());
   Get.put(FoodController());
-
+  Get.put(FoodDbController());
   runApp(const MyApp());
 }
 

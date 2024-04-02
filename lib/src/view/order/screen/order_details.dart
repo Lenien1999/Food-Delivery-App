@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:food_delivery_app/core/fire_cloud/db_controller/food_controller.dart';
+import 'package:food_delivery_app/core/fire_cloud/food_model/order_model.dart';
 import 'package:food_delivery_app/core/widgets/app_extension.dart';
-import 'package:food_delivery_app/core/fire_cloud/food_model/food_model.dart';
+
 import 'package:food_delivery_app/core/state_management/food_provider.dart';
 import 'package:food_delivery_app/src/view/cart_screen/widget/order_user_info.dart';
 import 'package:get/get.dart';
@@ -12,14 +14,14 @@ import '../../../../../core/utils/helpers.dart';
 import '../../foods/widget/custom_triangle.dart';
 
 class OrderDetails extends StatelessWidget {
-  final FoodItem foodItem;
+  final Orders order;
 
-  const OrderDetails({Key? key, required this.foodItem}) : super(key: key);
+  const OrderDetails({Key? key, required this.order}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GetBuilder<FoodController>(builder: (controller) {
+      body: GetBuilder<FoodDbController>(builder: (controller) {
         return SingleChildScrollView(
           child: Column(
             children: [
@@ -46,7 +48,8 @@ class OrderDetails extends StatelessWidget {
     );
   }
 
-  SizedBox _buildFoodDetails(BuildContext context, FoodController controller) {
+  SizedBox _buildFoodDetails(
+      BuildContext context, FoodDbController controller) {
     return SizedBox(
       width: double.infinity,
       child: Stack(
@@ -71,7 +74,7 @@ class OrderDetails extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      foodItem.name,
+                      order.cartFood.name,
                       style: appStyle(
                           color: Colors.black, size: 24, fw: FontWeight.bold),
                     ).fadeAnimation(0.6),
@@ -114,7 +117,7 @@ class OrderDetails extends StatelessWidget {
                             children: [
                               const SizedBox(height: 20),
                               Text(
-                                "NGN ${foodItem.totalPrice}",
+                                "NGN ${order.cartFood.totalPrice}",
                                 style: const TextStyle(
                                   color: AppColor.primary,
                                   fontSize: 30,
@@ -127,7 +130,7 @@ class OrderDetails extends StatelessWidget {
                                 child: Row(
                                   children: [
                                     Text(
-                                      "Number of ${foodItem.category == 'Solid' ? 'Wrap' : foodItem.category == 'Drinks' ? 'Drinks' : foodItem.category == 'Meats' ? 'Meats' : 'Spoons'}",
+                                      "Number of ${order.cartFood.category == 'Solid' ? 'Wrap' : order.cartFood.category == 'Drinks' ? 'Drinks' : order.cartFood.category == 'Meats' ? 'Meats' : 'Spoons'}",
                                       style: Helper.getTheme(context)
                                           .headlineMedium!
                                           .copyWith(
@@ -151,7 +154,7 @@ class OrderDetails extends StatelessWidget {
                                             MainAxisAlignment.center,
                                         children: [
                                           Text(
-                                            foodItem.quantity.toString(),
+                                            order.cartFood.quantity.toString(),
                                             style: const TextStyle(
                                               color: AppColor.orange,
                                             ),
@@ -185,7 +188,7 @@ class OrderDetails extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      foodItem.shortDescription,
+                      order.cartFood.shortDescription,
                       textAlign: TextAlign.justify,
                       style: const TextStyle(fontFamily: 'Poppins'),
                     ),
@@ -194,10 +197,10 @@ class OrderDetails extends StatelessWidget {
                   const SizedBox(
                     height: 10,
                   ),
-                  if (foodItem.category == 'Foods' ||
-                      foodItem.category == 'Solid' ||
-                      foodItem.category == 'meats' &&
-                          foodItem.additionalItems.isNotEmpty)
+                  if (order.cartFood.category == 'Foods' ||
+                      order.cartFood.category == 'Solid' ||
+                      order.cartFood.category == 'meats' &&
+                          order.cartFood.additionalItems.isNotEmpty)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -217,8 +220,8 @@ class OrderDetails extends StatelessWidget {
                           child: Wrap(
                             spacing: 30,
                             runSpacing: 20,
-                            children:
-                                foodItem.additionalItems.map((additionalItem) {
+                            children: order.cartFood.additionalItems
+                                .map((additionalItem) {
                               return additionalItem.quantity == 0
                                   ? Container(
                                       height: Helper.getScreenHeight(context) *
@@ -281,9 +284,9 @@ class OrderDetails extends StatelessWidget {
                   const SizedBox(
                     height: 15,
                   ),
-                  const OrderUserInfo(
-                    cafe: '',
-                    address: '',
+                  OrderUserInfo(
+                    cafe: order.cafeteria,
+                    address: order.address,
                   ),
                   Container(
                     height: 60,
@@ -296,7 +299,7 @@ class OrderDetails extends StatelessWidget {
                     ),
                     child: Center(
                       child: Text(
-                        "NGN ${foodItem.totalfooditems.toStringAsFixed(2)}",
+                        "NGN ${order.cartFood.totalfooditems.toStringAsFixed(2)}",
                         style: appStyle(
                             color: AppColor.orange,
                             size: 14,
@@ -309,19 +312,24 @@ class OrderDetails extends StatelessWidget {
                     child: Row(
                       children: [
                         Expanded(
-                          child: Container(
-                            height: 60,
-                            decoration: BoxDecoration(
-                              color: AppColor.orange,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Center(
-                              child: Text(
-                                'Confirm',
-                                style: appStyle(
-                                    color: Colors.white,
-                                    size: 14,
-                                    fw: FontWeight.bold),
+                          child: InkWell(
+                            onTap: () {
+                              controller.markOrderAsEnroute(order);
+                            },
+                            child: Container(
+                              height: 60,
+                              decoration: BoxDecoration(
+                                color: AppColor.orange,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Confirm',
+                                  style: appStyle(
+                                      color: Colors.white,
+                                      size: 14,
+                                      fw: FontWeight.bold),
+                                ),
                               ),
                             ),
                           ),
@@ -423,7 +431,7 @@ class OrderDetails extends StatelessWidget {
           height: Helper.getScreenHeight(context) * 0.5,
           width: Helper.getScreenWidth(context),
           child: Image.asset(
-            foodItem.imageURL,
+            order.cartFood.imageURL,
             fit: BoxFit.cover,
           ),
         ),

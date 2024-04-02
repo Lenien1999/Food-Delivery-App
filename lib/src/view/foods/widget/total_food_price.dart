@@ -112,12 +112,13 @@ class _TotalFoodPriceWidgetState extends State<TotalFoodPriceWidget> {
                                   address: widget.address,
                                   cafeteria: widget.cafe,
                                   cartFood: FoodItem(
-                                      totalPrice: widget.foodItem.price,
+                                      totalPrice: widget.foodItem.totalPrice,
                                       totalfooditems: widget.totalfoodprice,
                                       additionalItems: filteredAdditionalItems,
                                       category: widget.foodItem.category,
                                       name: widget.foodItem.name,
                                       price: widget.foodItem.price,
+                                      quantity: widget.foodItem.quantity,
                                       imageURL: widget.foodItem.imageURL,
                                       description: widget.foodItem.description,
                                       shortDescription:

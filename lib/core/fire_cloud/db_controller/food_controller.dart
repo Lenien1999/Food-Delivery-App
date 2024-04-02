@@ -7,7 +7,7 @@ import 'package:food_delivery_app/src/view/foods/views/food_page.dart';
 import 'package:get/get.dart';
 import '../food_model/order_model.dart';
 
-class FoodDbController {
+class FoodDbController extends GetxController {
   final CollectionReference _collectionReference =
       FirebaseFirestore.instance.collection('order');
 
@@ -46,14 +46,16 @@ class FoodDbController {
     });
   }
 
-  // Future<void> markOrderAsComplete(Orders orders) async {
-  //   _collectionReference.doc(orders.id).update({
-  //     "isDelivered": orders.isDelivered,
-  //     "cancellationTimestamp": orders.isDelivered
-  //         ? DateTime.now() // Set cancellation timestamp only when canceled
-  //         : null, // Clear cancellation timestamp if not canceled
-  //   });
-  // }
+  Future<void> markOrderAsEnroute(Orders orders) async {
+    final isNotEnRoute = orders.status != OrderStatus.enRoute;
+
+    _collectionReference.doc(orders.id).update({
+      "status": OrderStatus.enRoute.toJson(),
+      "cancellationTimestamp": isNotEnRoute
+          ? DateTime.now() // Set cancellation timestamp only when canceled
+          : null, // Clear cancellation timestamp if not canceled
+    });
+  }
 
   // Future<void> markOrderAsRejected(Orders orders) async {
   //   _collectionReference.doc(orders.id).update({

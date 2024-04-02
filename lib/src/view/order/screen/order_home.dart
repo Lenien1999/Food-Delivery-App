@@ -1,17 +1,12 @@
 import 'package:badges/badges.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart' hide Badge;
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:food_delivery_app/core/fire_cloud/db_controller/food_controller.dart';
-import 'package:food_delivery_app/core/fire_cloud/db_controller/user_controller.dart';
-import 'package:food_delivery_app/core/fire_cloud/food_model/food_model.dart';
 import 'package:food_delivery_app/core/fire_cloud/food_model/order_model.dart';
-
 import 'package:food_delivery_app/core/state_management/food_provider.dart';
 import 'package:food_delivery_app/core/utils/helpers.dart';
 import 'package:food_delivery_app/src/view/order/screen/order_details.dart';
 import 'package:get/get.dart';
-
 import '../../../../core/widgets/app_extension.dart';
 import '../../../../core/utils/colors.dart';
 import '../../../../core/widgets/rich_text.dart';
@@ -26,7 +21,6 @@ class OrderHome extends StatefulWidget {
 }
 
 class _OrderHomeState extends State<OrderHome> {
-  final orderCategory = ['All Order', 'Pending', 'Confirmed'];
   final controller = Get.put(FoodController());
   final foodController = Get.put(FoodDbController());
   @override
@@ -82,7 +76,8 @@ class _OrderHomeState extends State<OrderHome> {
                 child: ListView(
                   shrinkWrap: true,
                   scrollDirection: Axis.horizontal,
-                  children: List.generate(orderCategory.length, (index) {
+                  children: List.generate(OrderStatus.values.length, (index) {
+                    final status = OrderStatus.values[index];
                     return Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
@@ -92,7 +87,7 @@ class _OrderHomeState extends State<OrderHome> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 13, vertical: 8),
                         child: Text(
-                          orderCategory[index],
+                          status.toString().split('.').last,
                           style: appStyle(
                             color: const Color.fromRGBO(108, 117, 125, 1),
                             fw: FontWeight.w600,
@@ -145,7 +140,7 @@ class _OrderHomeState extends State<OrderHome> {
     return InkWell(
       onTap: () {
         Get.to(() => OrderDetails(
-              foodItem: orders.cartFood,
+              order: orders,
             ));
       },
       child: Container(
