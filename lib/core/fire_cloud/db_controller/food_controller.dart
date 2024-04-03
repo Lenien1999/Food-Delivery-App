@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
+import 'package:food_delivery_app/core/utils/snackbar.dart';
 import 'package:food_delivery_app/core/widgets/customNavBar.dart';
-import 'package:food_delivery_app/src/view/foods/views/food_page.dart';
-
 import 'package:get/get.dart';
-import '../food_model/order_model.dart';
+import '../model/order_model.dart';
 
 class FoodDbController extends GetxController {
   final CollectionReference _collectionReference =
@@ -14,25 +12,12 @@ class FoodDbController extends GetxController {
   Future<void> orderFood(Orders foods) async {
     try {
       await _collectionReference.add(foods.toJson());
-      // Display success message using snackbar
-      Get.snackbar(
-        "Success",
-        "Order placed successfully",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
+      SnackbarUtils.showSuccessSnackbar("Order placed successfully");
       buildConfirmBooking();
     } catch (error) {
-      // Display error message using snackbar
-      Get.snackbar(
-        "Error",
-        "Failed to place order. Please try again.",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      Get.off(() => const FoodHomePage());
+      SnackbarUtils.showErrorSnackbar(
+          "Failed to place order. Please try again.");
+      Get.offAll(() => const BuildBottomNavigation());
     }
   }
 
@@ -49,22 +34,53 @@ class FoodDbController extends GetxController {
   Future<void> markOrderAsEnroute(Orders orders) async {
     final isNotEnRoute = orders.status != OrderStatus.enRoute;
 
-    _collectionReference.doc(orders.id).update({
-      "status": OrderStatus.enRoute.toJson(),
-      "cancellationTimestamp": isNotEnRoute
-          ? DateTime.now() // Set cancellation timestamp only when canceled
-          : null, // Clear cancellation timestamp if not canceled
-    });
+    try {
+      await _collectionReference.doc(orders.id).update({
+        "status": OrderStatus.enRoute.toJson(),
+        "cancellationTimestamp": isNotEnRoute ? DateTime.now() : null,
+      });
+      SnackbarUtils.showSuccessSnackbar("Order marked as en route");
+      Get.offAll(() => const BuildBottomNavigation());
+    } catch (error) {
+      SnackbarUtils.showErrorSnackbar(
+          "Failed to mark order as en route. Please try again.");
+      Get.offAll(() => const BuildBottomNavigation());
+    }
   }
 
-  // Future<void> markOrderAsRejected(Orders orders) async {
-  //   _collectionReference.doc(orders.id).update({
-  //     "isCancelled": orders.isRejected,
-  //     "cancellationTimestamp": orders.isRejected
-  //         ? DateTime.now() // Set cancellation timestamp only when canceled
-  //         : null, // Clear cancellation timestamp if not canceled
-  //   });
-  // }
+  Future<void> markOrderAsCancelled(Orders orders) async {
+    final cancelled = orders.status != OrderStatus.cancelled;
+
+    try {
+      await _collectionReference.doc(orders.id).update({
+        "status": OrderStatus.cancelled.toJson(),
+        "cancellationTimestamp": cancelled ? DateTime.now() : null,
+      });
+      SnackbarUtils.showSuccessSnackbar("Order marked as cancelled");
+      Get.offAll(() => const BuildBottomNavigation());
+    } catch (error) {
+      SnackbarUtils.showErrorSnackbar(
+          "Failed to mark order as cancelled. Please try again.");
+      Get.offAll(() => const BuildBottomNavigation());
+    }
+  }
+
+  Future<void> markOrderAsDelivered(Orders orders) async {
+    final isNotDelivered = orders.status != OrderStatus.delivered;
+
+    try {
+      await _collectionReference.doc(orders.id).update({
+        "status": OrderStatus.delivered.toJson(),
+        "cancellationTimestamp": isNotDelivered ? DateTime.now() : null,
+      });
+      SnackbarUtils.showSuccessSnackbar("Order marked as delivered");
+      Get.offAll(() => const BuildBottomNavigation());
+    } catch (error) {
+      SnackbarUtils.showErrorSnackbar(
+          "Failed to mark order as delivered. Please try again.");
+      Get.offAll(() => const BuildBottomNavigation());
+    }
+  }
 
   Stream<List<Orders>> rejectOrderList() {
     return _collectionReference
@@ -106,31 +122,23 @@ class FoodDbController extends GetxController {
                   height: 60,
                   width: 60,
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
                 const Text(
                   'Order Successful',
                   style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                  ),
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
                 const Text(
                   'It is a long established fact that a reader will be distracted by the readable',
                   style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
+                      color: Colors.black,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500),
                 ),
-                const SizedBox(
-                  height: 25,
-                ),
+                const SizedBox(height: 25),
                 Container(
                   height: 50,
                   width: MediaQuery.of(Get.context!).size.width,
@@ -139,16 +147,14 @@ class FoodDbController extends GetxController {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: TextButton(
-                    onPressed: () {
-                      Get.offAll(() => const BuildBottomNavigation());
-                    },
+                    onPressed: () =>
+                        Get.offAll(() => const BuildBottomNavigation()),
                     child: const Text(
                       'Back to Home',
                       style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500),
                     ),
                   ),
                 )

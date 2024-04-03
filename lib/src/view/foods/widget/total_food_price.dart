@@ -1,10 +1,10 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, prefer_const_constructors
 
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/core/fire_cloud/auth/auth_controller/authcontroller.dart';
 import 'package:food_delivery_app/core/fire_cloud/db_controller/food_controller.dart';
-import 'package:food_delivery_app/core/fire_cloud/food_model/food_model.dart';
-import 'package:food_delivery_app/core/fire_cloud/food_model/order_model.dart';
+import 'package:food_delivery_app/core/fire_cloud/model/food_model.dart';
+import 'package:food_delivery_app/core/fire_cloud/model/order_model.dart';
 
 import 'package:food_delivery_app/core/state_management/food_provider.dart';
 import 'package:food_delivery_app/core/widgets/app_extension.dart';

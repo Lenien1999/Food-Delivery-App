@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/src/view/registration/widget/sign_login.dart';
 import 'package:food_delivery_app/core/utils/helpers.dart';

@@ -1,50 +1,69 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:food_delivery_app/core/fire_cloud/db_controller/food_controller.dart';
-import 'package:food_delivery_app/core/fire_cloud/food_model/order_model.dart';
+import 'package:food_delivery_app/core/fire_cloud/model/order_model.dart';
 import 'package:food_delivery_app/core/widgets/app_extension.dart';
-
-import 'package:food_delivery_app/core/state_management/food_provider.dart';
 import 'package:food_delivery_app/src/view/cart_screen/widget/order_user_info.dart';
 import 'package:get/get.dart';
 import 'package:shadow_clip/shadow_clip.dart';
 
 import '../../../../../core/utils/colors.dart';
 import '../../../../../core/utils/helpers.dart';
+import '../../../../core/fire_cloud/auth/auth_controller/user_data_mixin.dart';
 import '../../foods/widget/custom_triangle.dart';
 
-class OrderDetails extends StatelessWidget {
+class OrderDetails extends StatefulWidget {
   final Orders order;
 
   const OrderDetails({Key? key, required this.order}) : super(key: key);
 
   @override
+  State<OrderDetails> createState() => _OrderDetailsState();
+}
+
+class _OrderDetailsState extends State<OrderDetails> with UserDataMixin {
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // Simulate a delay to show the loading indicator
+    Future.delayed(const Duration(seconds: 2), () {
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GetBuilder<FoodDbController>(builder: (controller) {
-        return SingleChildScrollView(
-          child: Column(
-            children: [
-              Stack(
-                children: [
-                  foodAboutHeader(context).fadeAnimation(0.2),
-                  SafeArea(
-                    child: Column(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : GetBuilder<FoodDbController>(builder: (controller) {
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Stack(
                       children: [
-                        _buildHeader(context),
-                        SizedBox(
-                          height: Helper.getScreenHeight(context) * 0.35,
+                        foodAboutHeader(context).fadeAnimation(0.2),
+                        SafeArea(
+                          child: Column(
+                            children: [
+                              _buildHeader(context),
+                              SizedBox(
+                                height: Helper.getScreenHeight(context) * 0.35,
+                              ),
+                              _buildFoodDetails(context, controller),
+                            ],
+                          ),
                         ),
-                        _buildFoodDetails(context, controller),
                       ],
                     ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      }),
+                  ],
+                ),
+              );
+            }),
     );
   }
 
@@ -74,7 +93,7 @@ class OrderDetails extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      order.cartFood.name,
+                      widget.order.cartFood.name,
                       style: appStyle(
                           color: Colors.black, size: 24, fw: FontWeight.bold),
                     ).fadeAnimation(0.6),
@@ -117,7 +136,7 @@ class OrderDetails extends StatelessWidget {
                             children: [
                               const SizedBox(height: 20),
                               Text(
-                                "NGN ${order.cartFood.totalPrice}",
+                                "NGN ${widget.order.cartFood.totalPrice}",
                                 style: const TextStyle(
                                   color: AppColor.primary,
                                   fontSize: 30,
@@ -130,7 +149,7 @@ class OrderDetails extends StatelessWidget {
                                 child: Row(
                                   children: [
                                     Text(
-                                      "Number of ${order.cartFood.category == 'Solid' ? 'Wrap' : order.cartFood.category == 'Drinks' ? 'Drinks' : order.cartFood.category == 'Meats' ? 'Meats' : 'Spoons'}",
+                                      "Number of ${widget.order.cartFood.category == 'Solid' ? 'Wrap' : widget.order.cartFood.category == 'Drinks' ? 'Drinks' : widget.order.cartFood.category == 'Meats' ? 'Meats' : 'Spoons'}",
                                       style: Helper.getTheme(context)
                                           .headlineMedium!
                                           .copyWith(
@@ -154,7 +173,8 @@ class OrderDetails extends StatelessWidget {
                                             MainAxisAlignment.center,
                                         children: [
                                           Text(
-                                            order.cartFood.quantity.toString(),
+                                            widget.order.cartFood.quantity
+                                                .toString(),
                                             style: const TextStyle(
                                               color: AppColor.orange,
                                             ),
@@ -188,7 +208,7 @@ class OrderDetails extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      order.cartFood.shortDescription,
+                      widget.order.cartFood.shortDescription,
                       textAlign: TextAlign.justify,
                       style: const TextStyle(fontFamily: 'Poppins'),
                     ),
@@ -197,10 +217,10 @@ class OrderDetails extends StatelessWidget {
                   const SizedBox(
                     height: 10,
                   ),
-                  if (order.cartFood.category == 'Foods' ||
-                      order.cartFood.category == 'Solid' ||
-                      order.cartFood.category == 'meats' &&
-                          order.cartFood.additionalItems.isNotEmpty)
+                  if (widget.order.cartFood.category == 'Foods' ||
+                      widget.order.cartFood.category == 'Solid' ||
+                      widget.order.cartFood.category == 'meats' &&
+                          widget.order.cartFood.additionalItems.isNotEmpty)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -220,7 +240,7 @@ class OrderDetails extends StatelessWidget {
                           child: Wrap(
                             spacing: 30,
                             runSpacing: 20,
-                            children: order.cartFood.additionalItems
+                            children: widget.order.cartFood.additionalItems
                                 .map((additionalItem) {
                               return additionalItem.quantity == 0
                                   ? Container(
@@ -285,8 +305,8 @@ class OrderDetails extends StatelessWidget {
                     height: 15,
                   ),
                   OrderUserInfo(
-                    cafe: order.cafeteria,
-                    address: order.address,
+                    cafe: widget.order.cafeteria,
+                    address: widget.order.address,
                   ),
                   Container(
                     height: 60,
@@ -299,7 +319,7 @@ class OrderDetails extends StatelessWidget {
                     ),
                     child: Center(
                       child: Text(
-                        "NGN ${order.cartFood.totalfooditems.toStringAsFixed(2)}",
+                        "NGN ${widget.order.cartFood.totalfooditems.toStringAsFixed(2)}",
                         style: appStyle(
                             color: AppColor.orange,
                             size: 14,
@@ -307,58 +327,115 @@ class OrderDetails extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              controller.markOrderAsEnroute(order);
-                            },
-                            child: Container(
-                              height: 60,
-                              decoration: BoxDecoration(
-                                color: AppColor.orange,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'Confirm',
-                                  style: appStyle(
-                                      color: Colors.white,
-                                      size: 14,
-                                      fw: FontWeight.bold),
+                  if ((widget.order.status == OrderStatus.enRoute ||
+                          widget.order.status == OrderStatus.received) &&
+                      userdata!.email.contains('cafeteria'))
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                widget.order.status == OrderStatus.enRoute
+                                    ? controller
+                                        .markOrderAsDelivered(widget.order)
+                                    : controller
+                                        .markOrderAsEnroute(widget.order);
+                              },
+                              child: Container(
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  color: AppColor.orange,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    widget.order.status == OrderStatus.enRoute
+                                        ? 'Delivered'
+                                        : 'Confirmed',
+                                    style: appStyle(
+                                        color: Colors.white,
+                                        size: 14,
+                                        fw: FontWeight.bold),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Expanded(
-                          child: Container(
-                            height: 60,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: AppColor.placeholder),
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Center(
-                              child: Text(
-                                'Cancel',
-                                style: appStyle(
-                                    color: AppColor.orange,
-                                    size: 14,
-                                    fw: FontWeight.bold),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                controller.markOrderAsCancelled(widget.order);
+                              },
+                              child: Container(
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  border:
+                                      Border.all(color: AppColor.placeholder),
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    'Cancel',
+                                    style: appStyle(
+                                        color: AppColor.orange,
+                                        size: 14,
+                                        fw: FontWeight.bold),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
+                  if (widget.order.status == OrderStatus.cancelled &&
+                      userdata!.email.contains('cafeteria'))
+                    Center(
+                      child: Container(
+                        height: 60,
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        decoration: BoxDecoration(
+                          color: Colors.redAccent,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Cancelled',
+                            style: appStyle(
+                                color: Colors.white,
+                                size: 16,
+                                fw: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ),
+                  if (widget.order.status == OrderStatus.delivered &&
+                      userdata!.email.contains('cafeteria'))
+                    Center(
+                      child: Container(
+                        height: 60,
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Delievered',
+                            style: appStyle(
+                                color: Colors.white,
+                                size: 16,
+                                fw: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ).fadeAnimation(0.8),
@@ -431,7 +508,7 @@ class OrderDetails extends StatelessWidget {
           height: Helper.getScreenHeight(context) * 0.5,
           width: Helper.getScreenWidth(context),
           child: Image.asset(
-            order.cartFood.imageURL,
+            widget.order.cartFood.imageURL,
             fit: BoxFit.cover,
           ),
         ),

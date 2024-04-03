@@ -1,61 +1,85 @@
+// ignore_for_file: avoid_print
+
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart' hide Badge;
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:food_delivery_app/core/fire_cloud/auth/auth_controller/auth_model.dart';
 import 'package:food_delivery_app/core/fire_cloud/db_controller/food_controller.dart';
-import 'package:food_delivery_app/core/fire_cloud/food_model/order_model.dart';
-import 'package:food_delivery_app/core/state_management/food_provider.dart';
+import 'package:food_delivery_app/core/fire_cloud/db_controller/user_controller.dart';
+import 'package:food_delivery_app/core/fire_cloud/model/order_model.dart';
+
 import 'package:food_delivery_app/core/utils/helpers.dart';
 import 'package:food_delivery_app/src/view/order/screen/order_details.dart';
 import 'package:get/get.dart';
+import '../../../../core/fire_cloud/auth/auth_controller/user_data_mixin.dart';
 import '../../../../core/widgets/app_extension.dart';
 import '../../../../core/utils/colors.dart';
 import '../../../../core/widgets/rich_text.dart';
 
 class OrderHome extends StatefulWidget {
+  final OrderStatus status;
   const OrderHome({
     super.key,
+    required this.status,
   });
 
   @override
   State<OrderHome> createState() => _OrderHomeState();
 }
 
-class _OrderHomeState extends State<OrderHome> {
-  final controller = Get.put(FoodController());
+class _OrderHomeState extends State<OrderHome> with UserDataMixin {
   final foodController = Get.put(FoodDbController());
+  OrderStatus selectedStatus = OrderStatus.values[0]; // Default selected status
+
+  Future<UserModel?> _fetchUserData(String userId) async {
+    try {
+      FirebaseMethods firebaseMethods = FirebaseMethods();
+      UserModel? userData = await firebaseMethods.getUserData(userId);
+      return userData;
+    } catch (e) {
+      print('Error fetching user data: $e');
+      throw Exception(
+          'Failed to load user data'); // Rethrow or handle as needed
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            scrolledUnderElevation: 0.0,
-            iconTheme: const IconThemeData(color: Colors.white),
-            backgroundColor: AppColor.orange,
-            centerTitle: true,
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 20.0),
-                child: InkWell(
-                  onTap: () {},
-                  child: Badge(
-                    badgeStyle: const BadgeStyle(
-                        elevation: 2, badgeColor: Colors.white),
-                    badgeContent: const Text(
-                      '0',
-                      style: TextStyle(color: AppColor.orange),
-                    ),
-                    child: Image.asset(
-                      Helper.getAssetName("cart.png", "virtual"),
-                      color: Colors.white,
-                    ),
+          scrolledUnderElevation: 0.0,
+          iconTheme: const IconThemeData(color: Colors.white),
+          backgroundColor: AppColor.orange,
+          centerTitle: true,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 20.0),
+              child: InkWell(
+                onTap: () {},
+                child: Badge(
+                  badgeStyle:
+                      const BadgeStyle(elevation: 2, badgeColor: Colors.white),
+                  badgeContent: const Text(
+                    '0',
+                    style: TextStyle(color: AppColor.orange),
+                  ),
+                  child: Image.asset(
+                    Helper.getAssetName("cart.png", "virtual"),
+                    color: Colors.white,
                   ),
                 ),
-              )
-            ],
-            title: const AppRichText(
-                title: 'Tech-U', subtitle: ' CAFE', subColor: Colors.white)),
+              ),
+            )
+          ],
+          title: AppRichText(
+              title: '${widget.status.toString().split('.').last} ',
+              subtitle: ' Orders',
+              subColor: Colors.white),
+        ),
         body: Padding(
           padding: const EdgeInsets.all(14),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
                 controller: TextEditingController(),
@@ -69,34 +93,6 @@ class _OrderHomeState extends State<OrderHome> {
                   fillColor: const Color.fromRGBO(246, 247, 249, 1),
                   hintText: 'Search here',
                   prefixIcon: const Icon(Icons.search),
-                ),
-              ),
-              SizedBox(
-                height: 60,
-                child: ListView(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  children: List.generate(OrderStatus.values.length, (index) {
-                    final status = OrderStatus.values[index];
-                    return Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: const Color.fromRGBO(246, 247, 249, 1)),
-                      margin: const EdgeInsets.all(10),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 13, vertical: 8),
-                        child: Text(
-                          status.toString().split('.').last,
-                          style: appStyle(
-                            color: const Color.fromRGBO(108, 117, 125, 1),
-                            fw: FontWeight.w600,
-                            size: 14,
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
                 ),
               ),
               Expanded(
@@ -118,14 +114,14 @@ class _OrderHomeState extends State<OrderHome> {
                           child: Text('No Order'),
                         );
                       }
-                      final order = snapshot.data!;
-
+                      final order = snapshot.data!
+                          .where((order) => order.status == widget.status)
+                          .toList();
                       return ListView.builder(
                         itemCount: order.length,
                         itemBuilder: (BuildContext context, int index) {
                           final orders = order[index];
-                          print(
-                              "Cart food for order $index: ${orders.cartFood.category}");
+
                           return buildOrderItem(orders, context);
                         },
                       );
@@ -139,9 +135,7 @@ class _OrderHomeState extends State<OrderHome> {
   buildOrderItem(Orders orders, BuildContext context) {
     return InkWell(
       onTap: () {
-        Get.to(() => OrderDetails(
-              order: orders,
-            ));
+        Get.to(() => OrderDetails(order: orders));
       },
       child: Container(
         margin: const EdgeInsets.all(20),
@@ -162,59 +156,55 @@ class _OrderHomeState extends State<OrderHome> {
           children: [
             SizedBox(
               height: 175,
-              child: GestureDetector(
-                onTap: () {},
-                child: Stack(
-                  children: [
-                    Image.asset(
-                      orders.cartFood.imageURL,
-                      fit: BoxFit.fill,
-                      height: 160,
-                      width: MediaQuery.of(context).size.width,
-                    ),
-                    Positioned(
-                        left: 10,
-                        top: 10,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border:
-                                Border.all(color: AppColor.orange, width: 1),
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(23),
+              child: Stack(
+                children: [
+                  Image.asset(
+                    orders.cartFood.imageURL,
+                    fit: BoxFit.fill,
+                    height: 160,
+                    width: MediaQuery.of(context).size.width,
+                  ),
+                  Positioned(
+                      left: 10,
+                      top: 10,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: AppColor.orange, width: 1),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(23),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Text(
+                            orders.cartFood.name,
+                            style: const TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: AppColor.orange),
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Text(
-                              orders.cartFood.name,
-                              style: const TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColor.orange),
-                            ),
+                        ),
+                      )),
+                  Positioned(
+                      right: 20,
+                      bottom: 0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.white, width: 1),
+                          color: AppColor.orange,
+                          borderRadius: BorderRadius.circular(23),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 5.0, horizontal: 10),
+                          child: Text(
+                            "NG${orders.cartFood.totalfooditems}",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
                           ),
-                        )),
-                    Positioned(
-                        right: 20,
-                        bottom: 0,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.white, width: 1),
-                            color: AppColor.orange,
-                            borderRadius: BorderRadius.circular(23),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 5.0, horizontal: 10),
-                            child: Text(
-                              "\$${orders.cartFood.price}",
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
-                            ),
-                          ),
-                        ))
-                  ],
-                ),
+                        ),
+                      ))
+                ],
               ),
             ),
             Row(
@@ -244,7 +234,7 @@ class _OrderHomeState extends State<OrderHome> {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(2.0),
               child: SizedBox(
                 width: 310,
                 child: Text(
@@ -259,32 +249,47 @@ class _OrderHomeState extends State<OrderHome> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
+            FutureBuilder<UserModel?>(
+              future: _fetchUserData(
+                  orders.userId), // This assumes you have the user's ID
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                } else if (snapshot.hasData) {
+                  final user = snapshot.data!;
+                  return ListTile(
+                    leading: const CircleAvatar(
+                        backgroundImage: AssetImage(
                       'assets/images/real/user.jpg',
-                      height: 30,
-                      width: 30,
+                    )),
+                    title: Text(
+                      user.fullName,
+                      style: appStyle(
+                        color: const Color.fromRGBO(108, 117, 125, 1),
+                        fw: FontWeight.w600,
+                        size: 14,
+                      ),
                     ),
-                  ),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  Text(
-                    'Aminu Azeez',
-                    style: appStyle(
-                      color: const Color.fromRGBO(108, 117, 125, 1),
-                      fw: FontWeight.w600,
-                      size: 14,
-                    ),
-                  )
-                ],
-              ),
-            )
+                    trailing: IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.account_balance_sharp,
+                          color: AppColor.orange,
+                        )), // Handle null case
+                    subtitle: Text(
+                      user.phoneNo,
+                      style: appStyle(
+                        color: const Color.fromARGB(255, 218, 137, 16),
+                        fw: FontWeight.w600,
+                        size: 12,
+                      ),
+                    ), // Handle null case
+                  );
+                } else {
+                  return const Text('User data not found');
+                }
+              },
+            ),
           ],
         ),
       ),

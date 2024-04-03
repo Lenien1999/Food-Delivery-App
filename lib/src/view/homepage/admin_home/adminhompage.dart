@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:food_delivery_app/core/fire_cloud/model/order_model.dart';
 import 'package:food_delivery_app/core/widgets/app_extension.dart';
 import 'package:food_delivery_app/core/utils/colors.dart';
 import 'package:food_delivery_app/src/view/order/screen/order_home.dart';
 import 'package:get/get.dart';
-
 import '../../../../core/fire_cloud/auth/auth_controller/user_data_mixin.dart';
 
 class CafeHome extends StatefulWidget {
@@ -14,6 +16,66 @@ class CafeHome extends StatefulWidget {
 }
 
 class _CafeHomeState extends State<CafeHome> with UserDataMixin {
+  int totalOrders = 0;
+  int deliveredOrders = 0;
+  int acceptedOrders = 0;
+  int cancelledOrders = 0;
+  int receivedOrders = 0;
+  @override
+  void initState() {
+    super.initState();
+    fetchOrderCounts();
+  }
+
+  void fetchOrderCounts() {
+    FirebaseFirestore.instance.collection('order').snapshots().listen(
+      (snapshot) {
+        int tmpTotalOrders = snapshot.docs.length;
+        int tmpDeliveredOrders = 0;
+        int tmpAcceptedOrders = 0;
+        int tmpCancelledOrders = 0;
+        int tmpReceivedOrders = 0;
+
+        for (var doc in snapshot.docs) {
+          try {
+            OrderStatus status = OrderStatusExtension.fromJson(doc['status']);
+            switch (status) {
+              case OrderStatus.delivered:
+                tmpDeliveredOrders++;
+                break;
+              case OrderStatus.received:
+                tmpReceivedOrders++;
+
+                break;
+              case OrderStatus.cancelled:
+                tmpCancelledOrders++;
+                break;
+              case OrderStatus.enRoute:
+                tmpAcceptedOrders++;
+                break;
+              default:
+                break;
+            }
+          } catch (e) {
+            // Handle any potential errors, such as data format issues
+            print("Error processing document ${doc.id}: $e");
+          }
+        }
+
+        if (mounted) {
+          setState(() {
+            totalOrders = tmpTotalOrders;
+            receivedOrders = tmpReceivedOrders;
+            deliveredOrders = tmpDeliveredOrders;
+            acceptedOrders = tmpAcceptedOrders;
+            cancelledOrders = tmpCancelledOrders;
+          });
+        }
+      },
+      onError: (error) => print("Error listening to order updates: $error"),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -109,17 +171,27 @@ class _CafeHomeState extends State<CafeHome> with UserDataMixin {
                 Expanded(
                   child: InkWell(
                     onTap: () {
-                      Get.to(() => const OrderHome());
+                      Get.to(() => const OrderHome(
+                            status: OrderStatus.received,
+                          ));
                     },
-                    child: buildCafeInfo(
-                        '90', ' Total Order', Icons.my_library_books_outlined),
+                    child: buildCafeInfo(receivedOrders.toString(),
+                        ' Received Order', FontAwesomeIcons.basketShopping),
                   ),
                 ),
                 const SizedBox(
                   width: 5,
                 ),
                 Expanded(
-                  child: buildCafeInfo('15', ' Delivered', Icons.food_bank),
+                  child: InkWell(
+                    onTap: () {
+                      Get.to(() => const OrderHome(
+                            status: OrderStatus.delivered,
+                          ));
+                    },
+                    child: buildCafeInfo(deliveredOrders.toString(),
+                        ' Delivered', Icons.food_bank),
+                  ),
                 ),
               ],
             ),
@@ -132,101 +204,48 @@ class _CafeHomeState extends State<CafeHome> with UserDataMixin {
                 Expanded(
                     child: InkWell(
                   onTap: () {
-                    // Get.to(() => const OrderHome());
+                    Get.to(() => const OrderHome(
+                          status: OrderStatus.enRoute,
+                        ));
                   },
-                  child: buildCafeInfo(
-                      '30', 'Accepted Order', Icons.mark_chat_read),
+                  child: buildCafeInfo(acceptedOrders.toString(),
+                      'EnRoute Order', FontAwesomeIcons.bicycle),
                 )),
                 const SizedBox(
                   width: 5,
                 ),
                 Expanded(
-                  child: buildCafeInfo('15', 'Cancelled', Icons.cancel),
+                  child: InkWell(
+                    onTap: () {
+                      Get.to(() => const OrderHome(
+                            status: OrderStatus.cancelled,
+                          ));
+                    },
+                    child: buildCafeInfo(cancelledOrders.toString(),
+                        'Cancelled', FontAwesomeIcons.ban),
+                  ),
                 ),
               ],
             ),
             const SizedBox(
               height: 15,
             ),
-            Container(
-              color: const Color.fromRGBO(246, 247, 249, 1),
-              padding: const EdgeInsets.all(17),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Contact Cafeteria Staff',
-                    style: appStyle(
-                        color: AppColor.orange, fw: FontWeight.w800, size: 16),
-                  ),
-                ],
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(
+                  child: buildCafeInfo(totalOrders.toString(), ' Total Order',
+                      Icons.my_library_books_outlined),
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
+                Expanded(
+                  child: buildCafeInfo(
+                      '0', ' Incoming Order', FontAwesomeIcons.expeditedssl),
+                ),
+              ],
             ),
-            GridView.builder(
-                itemCount: 2,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 15,
-                    mainAxisSpacing: 15),
-                itemBuilder: (context, index) {
-                  return Container(
-                    height: 216,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: const Color.fromRGBO(246, 247, 249, 1),
-                          width: 2,
-                        )),
-                    child: Column(children: [
-                      Expanded(
-                        child: Container(
-                          height: 110,
-                          width: MediaQuery.of(context).size.width,
-                          decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(12),
-                                  topLeft: Radius.circular(12))),
-                          child: Image.asset('assets/images/real/user.jpg',
-                              height: 110, fit: BoxFit.fitHeight),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        'Mosunmola Ayoke',
-                        style: appStyle(
-                            color: AppColor.orange,
-                            fw: FontWeight.w800,
-                            size: 14),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            CircleAvatar(
-                              backgroundColor: AppColor.orange,
-                              child: Icon(
-                                Icons.call_outlined,
-                                color: Colors.white,
-                              ),
-                            ),
-                            CircleAvatar(
-                              backgroundColor: AppColor.orange,
-                              child: Icon(
-                                Icons.message,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    ]),
-                  );
-                })
           ],
         ),
       ),

@@ -1,4 +1,4 @@
-import 'package:food_delivery_app/core/fire_cloud/food_model/food_model.dart';
+import 'package:food_delivery_app/core/fire_cloud/model/food_model.dart';
 
 import 'package:get/get.dart';
 

@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/src/view/registration/screens/forgetPwScreen.dart';
 import 'package:food_delivery_app/core/utils/helpers.dart';
@@ -8,8 +10,6 @@ import '../widget/auth_header.dart';
 import './newPwScreen.dart';
 
 class SendOTPScreen extends StatelessWidget {
-
-
   const SendOTPScreen({super.key});
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class SendOTPScreen extends StatelessWidget {
               AppButton(
                 title: 'Next',
                 tap: () {
-                 Get.to(()=>const NewPwScreen());
+                  Get.to(() => const NewPwScreen());
                 },
               ),
               const SizedBox(height: 10),
@@ -62,7 +62,7 @@ class SendOTPScreen extends StatelessWidget {
                   const Text("Didn't Recieve? "),
                   InkWell(
                     onTap: () {
-                     Get.to(()=>const ForgetPwScreen());
+                      Get.to(() => const ForgetPwScreen());
                     },
                     child: const Text(
                       "Click Here",

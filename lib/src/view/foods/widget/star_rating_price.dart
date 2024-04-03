@@ -1,9 +1,11 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:food_delivery_app/core/fire_cloud/food_model/food_model.dart';
+import 'package:food_delivery_app/core/fire_cloud/model/food_model.dart';
 
 import '../../../../core/utils/colors.dart';
 

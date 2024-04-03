@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../../core/fire_cloud/food_model/food_model.dart';
+import 'package:food_delivery_app/core/fire_cloud/model/food_model.dart';
+ 
 
 // Define the enum for OrderStatus
-enum OrderStatus { received,  enRoute, delivered }
+enum OrderStatus { received,  enRoute,cancelled, delivered }
 
 // Implement the toJson and fromJson methods for the enum
 extension OrderStatusExtension on OrderStatus {
@@ -14,7 +15,9 @@ extension OrderStatusExtension on OrderStatus {
     switch (json) {
       case 'received':
         return OrderStatus.received;
- 
+  
+      case 'cancelled':
+        return OrderStatus.cancelled;
       case 'enRoute':
         return OrderStatus.enRoute;
       case 'delivered':

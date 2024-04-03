@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/core/fire_cloud/auth/auth_controller/user_data_mixin.dart';

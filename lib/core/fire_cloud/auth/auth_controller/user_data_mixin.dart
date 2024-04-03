@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/core/fire_cloud/auth/auth_controller/auth_model.dart';
 import 'package:food_delivery_app/core/fire_cloud/auth/auth_controller/authcontroller.dart';
@@ -20,7 +22,6 @@ mixin UserDataMixin<T extends StatefulWidget> on State<T> {
       await _fetchUserData(controller.fireBaseUser.value!.uid);
     } else {
       // Handle the case where fireBaseUser is null
-      print("Firebase user is null");
     }
   }
 

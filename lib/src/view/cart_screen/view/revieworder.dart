@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery_app/core/fire_cloud/food_model/food_model.dart';
+import 'package:food_delivery_app/core/fire_cloud/model/food_model.dart';
 
 import 'package:food_delivery_app/src/view/foods/widget/total_food_price.dart';
 import 'package:get/get.dart';
