@@ -29,7 +29,7 @@ class _BuildBottomNavigationState extends State<BuildBottomNavigation>
     // const CafeHome(),
     const FoodHomePage(),
     const NotificationScreen(),
-    const OrderHistory(),
+    const AdminOrderHome(),
     const ProfilePage(),
   ];
   List<Widget> cafeteriaPages = [
