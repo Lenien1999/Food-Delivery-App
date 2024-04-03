@@ -163,8 +163,10 @@ class _HomePageState extends State<HomePage> {
                                     return FoodsScreen(category: e);
                                   }));
                                 },
-                                child: _buildCategoryCard(
-                                    e.image, e.categoryName)))
+                                child: Center(
+                                  child: _buildCategoryCard(
+                                      e.image, e.categoryName),
+                                )))
                             .toList()),
                   ),
                   Padding(
@@ -239,7 +241,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   AppBar customAppbar() {
-  
     return AppBar(
       scrolledUnderElevation: 0,
       backgroundColor: Colors.transparent,
@@ -264,9 +265,7 @@ class _HomePageState extends State<HomePage> {
             subColor: AppColor.orange,
           ),
           InkWell(
-            onTap: () {
-             
-            },
+            onTap: () {},
             child: Badge(
               badgeStyle: const BadgeStyle(elevation: 2),
               badgeContent: const Text(

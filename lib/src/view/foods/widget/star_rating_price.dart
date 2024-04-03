@@ -18,8 +18,7 @@ class StarRatingAndPriceWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return
-     Padding(
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,7 +64,8 @@ class StarRatingAndPriceWidget extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                Text("/per ${foodItem.category == 'Solid' ? 'Wrap' : 'spoon'}")
+                Text(
+                    "/per ${foodItem.category == 'Solid' ? 'Wrap' : foodItem.category == 'Drinks' ? 'Drinks' : foodItem.category == 'Meats' ? 'Meats' : 'Spoons'}")
               ],
             ),
           )

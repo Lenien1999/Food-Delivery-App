@@ -327,8 +327,66 @@ class _OrderDetailsState extends State<OrderDetails> with UserDataMixin {
                       ),
                     ),
                   ),
-                  if ((widget.order.status == OrderStatus.enRoute ||
-                          widget.order.status == OrderStatus.received) &&
+                  if (widget.order.status == OrderStatus.enRoute)
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                controller.markOrderAsDelivered(widget.order);
+                              },
+                              child: Container(
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  color: AppColor.orange,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    'Delivered',
+                                    style: appStyle(
+                                        color: Colors.white,
+                                        size: 14,
+                                        fw: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                controller.markOrderAsCancelled(widget.order);
+                              },
+                              child: Container(
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  border:
+                                      Border.all(color: AppColor.placeholder),
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    'Cancel',
+                                    style: appStyle(
+                                        color: AppColor.orange,
+                                        size: 14,
+                                        fw: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  if (widget.order.status == OrderStatus.received &&
                       userdata!.email.contains('cafeteria'))
                     Padding(
                       padding: const EdgeInsets.all(12.0),
