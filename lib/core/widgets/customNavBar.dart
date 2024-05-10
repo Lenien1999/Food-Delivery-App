@@ -1,19 +1,17 @@
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_delivery_app/core/fire_cloud/auth/auth_controller/user_data_mixin.dart';
 import 'package:food_delivery_app/core/state_management/food_provider.dart';
 import 'package:food_delivery_app/core/utils/colors.dart';
-
 import 'package:food_delivery_app/src/view/foods/views/food_page.dart';
-import 'package:food_delivery_app/src/view/order/screen/order_history.dart';
+import 'package:food_delivery_app/src/view/homepage/admin_home/cafeteria.dart';
 import 'package:food_delivery_app/src/view/profile/view/profile_screen.dart';
 import 'package:get/get.dart';
-
 import '../../src/view/homepage/admin_home/adminhompage.dart';
 import '../../src/view/homepage/screens/homepage.dart';
 import '../../src/view/notification/notification_screen.dart';
 import '../../src/view/order/screen/admin_order.dart';
+import '../../src/view/review/review.dart';
 
 class BuildBottomNavigation extends StatefulWidget {
   const BuildBottomNavigation({Key? key});
@@ -29,14 +27,14 @@ class _BuildBottomNavigationState extends State<BuildBottomNavigation>
     // const CafeHome(),
     const FoodHomePage(),
     const NotificationScreen(),
-    const AdminOrderHome(),
+    const OrderDashBoard(),
     const ProfilePage(),
   ];
   List<Widget> cafeteriaPages = [
     const CafeHome(),
-    const FoodHomePage(),
-    const NotificationScreen(),
-    const AdminOrderHome(),
+    const OrderDashBoard(),
+    const Cafeteria(),
+    const ReviewBoard(),
     const ProfilePage(),
   ];
 
@@ -133,7 +131,7 @@ class _BuildBottomNavigationState extends State<BuildBottomNavigation>
               floatingActionButton: FloatingActionButton(
                 onPressed: () {},
                 child: const CircleAvatar(
-                  backgroundImage: ExtendedAssetImageProvider(
+                  backgroundImage: AssetImage(
                     'assets/images/virtual/vector3.png',
                   ),
                 ),

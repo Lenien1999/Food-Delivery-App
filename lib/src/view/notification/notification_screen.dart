@@ -151,61 +151,78 @@ class _NotificationScreenState extends State<NotificationScreen> {
     );
   }
 
-  List<Widget> _buildOrderStatusNotifications(Orders order) {
-    List<Widget> notifications = [];
+List<Widget> _buildOrderStatusNotifications(Orders order) {
+  List<Widget> notifications = [];
 
-    // Generate a notification tile for each status that is true.
-    if (order.status == OrderStatus.received) {
-      notifications.add(
-        InkWell(
-          onTap: () {
-            Get.to(() => OrderDetails(order: order));
-          },
-          child: _buildNotificationTile(
-            "Order Received",
-            "Your order has been received.",
-            Icons.check,
-            Colors.blue,
-          ),
+  // Generate a notification tile for each status that is true.
+  if (order.status == OrderStatus.received) {
+    notifications.add(
+      InkWell(
+        onTap: () {
+          Get.to(() => OrderDetails(order: order));
+        },
+        child: _buildNotificationTile(
+          "Order Received",
+          "Your order has been received.",
+          Icons.check,
+          Colors.blue,
         ),
-      );
-    }
-
-    if (order.status == OrderStatus.enRoute) {
-      Random random = Random();
-      int deliveryTime = random.nextInt(26) + 5;
-      notifications.add(
-        InkWell(
-          onTap: () {
-            Get.to(() => OrderDetails(order: order));
-          },
-          child: _buildNotificationTile(
-            "Order En Route",
-            "Your order is en route for delivery in the next $deliveryTime min.",
-            Icons.local_shipping,
-            Colors.green,
-          ),
-        ),
-      );
-    }
-    if (order.status == OrderStatus.delivered) {
-      notifications.add(
-        InkWell(
-          onTap: () {
-            Get.to(() => OrderDetails(order: order));
-          },
-          child: _buildNotificationTile(
-            "Order Delivered",
-            "Your order has been confirmed for delivery",
-            Icons.delivery_dining,
-            Colors.purple,
-          ),
-        ),
-      );
-    }
-
-    return notifications;
+      ),
+    );
   }
+
+  if (order.status == OrderStatus.enRoute) {
+    Random random = Random();
+    int deliveryTime = random.nextInt(26) + 5;
+    notifications.add(
+      InkWell(
+        onTap: () {
+          Get.to(() => OrderDetails(order: order));
+        },
+        child: _buildNotificationTile(
+          "Order En Route",
+          "Your order is en route for delivery in the next $deliveryTime min.",
+          Icons.local_shipping,
+          Colors.green,
+        ),
+      ),
+    );
+  }
+
+  if (order.status == OrderStatus.delivered) {
+    notifications.add(
+      InkWell(
+        onTap: () {
+          Get.to(() => OrderDetails(order: order));
+        },
+        child: _buildNotificationTile(
+          "Order Delivered",
+          "Your order has been confirmed for delivery",
+          Icons.delivery_dining,
+          Colors.purple,
+        ),
+      ),
+    );
+  }
+
+  if (order.status == OrderStatus.cancelled) {
+    notifications.add(
+      InkWell(
+        onTap: () {
+          Get.to(() => OrderDetails(order: order));
+        },
+        child: _buildNotificationTile(
+          "Order Cancelled",
+          "Your order has been cancelled.",
+          Icons.cancel,
+          Colors.red,
+        ),
+      ),
+    );
+  }
+
+  return notifications;
+}
 
   Widget _buildNotificationTile(
       String title, String subtitle, IconData icon, Color color) {

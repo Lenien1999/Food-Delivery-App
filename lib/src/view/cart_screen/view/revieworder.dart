@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/core/fire_cloud/model/food_model.dart';
-
-import 'package:food_delivery_app/src/view/foods/widget/total_food_price.dart';
+ import 'package:food_delivery_app/src/view/foods/widget/total_food_price.dart';
 import 'package:get/get.dart';
-
 import '../../../../core/widgets/app_extension.dart';
 import '../../../../core/state_management/food_provider.dart';
 import '../../../../core/utils/colors.dart';
@@ -12,16 +10,16 @@ import '../widget/order_user_info.dart';
 
 class ReviewOrder extends StatefulWidget {
   final double totalFoodPrice;
-   
   final FoodItem foodItem;
   final String cafeteria;
   final String address;
-  const ReviewOrder(
-      {super.key,
-      required this.cafeteria,
-      required this.address,
-      required this.totalFoodPrice,
-      required this.foodItem, });
+  const ReviewOrder({
+    super.key,
+    required this.cafeteria,
+    required this.address,
+    required this.totalFoodPrice,
+    required this.foodItem,
+  });
 
   @override
   State<ReviewOrder> createState() => _ReviewOrderState();
@@ -112,6 +110,7 @@ class _ReviewOrderState extends State<ReviewOrder> {
                   OrderUserInfo(
                     cafe: widget.cafeteria,
                     address: widget.address,
+                   
                   ),
                   const SizedBox(
                     height: 20,
@@ -174,7 +173,6 @@ class _ReviewOrderState extends State<ReviewOrder> {
                   selectedValue: _selectedValue,
                   cafe: widget.cafeteria,
                   address: widget.address,
-                 
                 )),
           ],
         );

@@ -117,6 +117,24 @@ class _OrderHomeState extends State<OrderHome> with UserDataMixin {
                       final order = snapshot.data!
                           .where((order) => order.status == widget.status)
                           .toList();
+                      if (order.isEmpty) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset('assets/images/virtual/vector2.png'),
+                              Text(
+                                'Empty',
+                                style: appStyle(
+                                  color: AppColor.placeholder,
+                                  size: 18,
+                                  fw: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
                       return ListView.builder(
                         itemCount: order.length,
                         itemBuilder: (BuildContext context, int index) {

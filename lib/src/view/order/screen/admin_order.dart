@@ -15,16 +15,16 @@ import '../../../../core/widgets/app_extension.dart';
 import '../../../../core/utils/colors.dart';
 import '../../../../core/widgets/rich_text.dart';
 
-class AdminOrderHome extends StatefulWidget {
-  const AdminOrderHome({
+class OrderDashBoard extends StatefulWidget {
+  const OrderDashBoard({
     super.key,
   });
 
   @override
-  State<AdminOrderHome> createState() => _AdminOrderHomeState();
+  State<OrderDashBoard> createState() => _OrderDashBoardState();
 }
 
-class _AdminOrderHomeState extends State<AdminOrderHome> with UserDataMixin {
+class _OrderDashBoardState extends State<OrderDashBoard> with UserDataMixin {
   final foodController = Get.put(FoodDbController());
   OrderStatus selectedStatus = OrderStatus.values[0]; // Default selected status
 
@@ -43,147 +43,139 @@ class _AdminOrderHomeState extends State<AdminOrderHome> with UserDataMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            scrolledUnderElevation: 0.0,
-            iconTheme: const IconThemeData(color: Colors.white),
-            backgroundColor: AppColor.orange,
-            centerTitle: true,
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 20.0),
-                child: InkWell(
-                  onTap: () {},
-                  child: Badge(
-                    badgeStyle: const BadgeStyle(
-                        elevation: 2, badgeColor: Colors.white),
-                    badgeContent: const Text(
-                      '0',
-                      style: TextStyle(color: AppColor.orange),
-                    ),
-                    child: Image.asset(
-                      Helper.getAssetName("cart.png", "virtual"),
-                      color: Colors.white,
-                    ),
+      appBar: AppBar(
+          scrolledUnderElevation: 0.0,
+          iconTheme: const IconThemeData(color: Colors.white),
+          backgroundColor: AppColor.orange,
+          centerTitle: true,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 20.0),
+              child: InkWell(
+                onTap: () {},
+                child: Badge(
+                  badgeStyle:
+                      const BadgeStyle(elevation: 2, badgeColor: Colors.white),
+                  badgeContent: const Text(
+                    '0',
+                    style: TextStyle(color: AppColor.orange),
+                  ),
+                  child: Image.asset(
+                    Helper.getAssetName("cart.png", "virtual"),
+                    color: Colors.white,
                   ),
                 ),
-              )
-            ],
-            title: const AppRichText(
-                title: 'Tech-U', subtitle: ' CAFE', subColor: Colors.white)),
-        body: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('order')
-                .where('userId', isEqualTo: userdata?.id)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              }
-              final orders = snapshot.data!.docs
-                  .map((doc) => Orders.fromJson(
-                      doc.data() as Map<String, dynamic>, doc.id))
-                  .toList();
-
-              return Padding(
+              ),
+            )
+          ],
+          title: const AppRichText(
+              title: 'Tech-U', subtitle: ' CAFE', subColor: Colors.white)),
+      body: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('order')
+              .where('userId', isEqualTo: userdata?.id)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+            final orders = snapshot.data!.docs
+                .map((doc) =>
+                    Orders.fromJson(doc.data() as Map<String, dynamic>, doc.id))
+                .toList();
+            final order = orders
+                .where((order) => order.status == selectedStatus)
+                .toList();
+     if (order.isEmpty) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset('assets/images/virtual/vector2.png'),
+                              Text(
+                                'Empty',
+                                style: appStyle(
+                                  color: AppColor.placeholder,
+                                  size: 18,
+                                  fw: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+            return Padding(
                 padding: const EdgeInsets.all(14),
-                child: Column(
-                  children: [
-                    TextFormField(
-                      controller: TextEditingController(),
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.all(15),
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(13),
-                        ),
-                        filled: true,
-                        fillColor: const Color.fromRGBO(246, 247, 249, 1),
-                        hintText: 'Search here',
-                        prefixIcon: const Icon(Icons.search),
+                child: Column(children: [
+                  TextFormField(
+                    controller: TextEditingController(),
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.all(15),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(13),
                       ),
+                      filled: true,
+                      fillColor: const Color.fromRGBO(246, 247, 249, 1),
+                      hintText: 'Search here',
+                      prefixIcon: const Icon(Icons.search),
                     ),
-                    SizedBox(
-                      height: 60,
-                      child: ListView(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        children:
-                            List.generate(OrderStatus.values.length, (index) {
-                          final status = OrderStatus.values[index];
-                          return InkWell(
-                            onTap: () {
-                              setState(() {
-                                selectedStatus = status;
-                              });
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
+                  ),
+                  SizedBox(
+                    height: 60,
+                    child: ListView(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      children:
+                          List.generate(OrderStatus.values.length, (index) {
+                        final status = OrderStatus.values[index];
+                        return InkWell(
+                          onTap: () {
+                            setState(() {
+                              selectedStatus = status;
+                            });
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: selectedStatus == status
+                                    ? Colors.redAccent
+                                    : const Color.fromRGBO(246, 247, 249, 1)),
+                            margin: const EdgeInsets.all(10),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 13, vertical: 8),
+                              child: Text(
+                                status.toString().split('.').last,
+                                style: appStyle(
                                   color: selectedStatus == status
-                                      ? Colors.redAccent
-                                      : const Color.fromRGBO(246, 247, 249, 1)),
-                              margin: const EdgeInsets.all(10),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 13, vertical: 8),
-                                child: Text(
-                                  status.toString().split('.').last,
-                                  style: appStyle(
-                                    color: selectedStatus == status
-                                        ? Colors.white
-                                        : const Color.fromRGBO(
-                                            108, 117, 125, 1),
-                                    fw: FontWeight.w600,
-                                    size: 14,
-                                  ),
+                                      ? Colors.white
+                                      : const Color.fromRGBO(108, 117, 125, 1),
+                                  fw: FontWeight.w600,
+                                  size: 14,
                                 ),
                               ),
                             ),
-                          );
-                        }),
-                      ),
+                          ),
+                        );
+                      }),
                     ),
-                    Expanded(
-                      child: StreamBuilder<List<Orders>>(
-                          stream: foodController.orderFoodList(),
-                          builder: (BuildContext context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                            if (snapshot.hasError) {
-                              return Center(
-                                child: Text('Error: ${snapshot.error}'),
-                              );
-                            }
-                            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return const Center(
-                                child: Text('No Order'),
-                              );
-                            }
-                            final order = snapshot.data!
-                                .where(
-                                    (order) => order.status == selectedStatus)
-                                .toList();
-                            return ListView.builder(
-                              itemCount: order.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                final orders = order[index];
+                  ),
+                  Expanded(
+                      child: ListView.builder(
+                    itemCount: order.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final orders = order[index];
 
-                                return buildOrderItem(orders, context);
-                              },
-                            );
-                          }),
-                    ),
-                  ],
-                ),
-              );
-            }));
+                      return buildOrderItem(orders, context);
+                    },
+                  ))
+                ]));
+          }),
+    );
   }
 
   buildOrderItem(Orders orders, BuildContext context) {
@@ -303,48 +295,48 @@ class _AdminOrderHomeState extends State<AdminOrderHome> with UserDataMixin {
                 ),
               ),
             ),
-            if (userdata!.email.contains('cafateria'))
-              FutureBuilder<UserModel?>(
-                future: _fetchUserData(
-                    orders.userId), // This assumes you have the user's ID
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
-                  } else if (snapshot.hasData) {
-                    final user = snapshot.data!;
-                    return ListTile(
-                      leading: const CircleAvatar(
-                          backgroundImage: AssetImage(
-                        'assets/images/real/user.jpg',
-                      )),
-                      title: Text(
-                        user.fullName,
-                        style: appStyle(
-                          color: const Color.fromRGBO(108, 117, 125, 1),
-                          fw: FontWeight.w600,
-                          size: 14,
-                        ),
+            // if (userdata!.email.contains('cafateria'))
+            FutureBuilder<UserModel?>(
+              future: _fetchUserData(
+                  orders.userId), // This assumes you have the user's ID
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                } else if (snapshot.hasData) {
+                  final user = snapshot.data!;
+                  return ListTile(
+                    leading: const CircleAvatar(
+                        backgroundImage: AssetImage(
+                      'assets/images/real/user.jpg',
+                    )),
+                    title: Text(
+                      user.fullName,
+                      style: appStyle(
+                        color: const Color.fromRGBO(108, 117, 125, 1),
+                        fw: FontWeight.w600,
+                        size: 14,
                       ),
-                      trailing: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.account_balance_sharp,
-                            color: AppColor.orange,
-                          )), // Handle null case
-                      subtitle: Text(
-                        user.phoneNo,
-                        style: appStyle(
-                          color: const Color.fromARGB(255, 218, 137, 16),
-                          fw: FontWeight.w600,
-                          size: 12,
-                        ),
-                      ), // Handle null case
-                    );
-                  } else {
-                    return const Text('User data not found');
-                  }
-                },
-              ),
+                    ),
+                    trailing: IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.account_balance_sharp,
+                          color: AppColor.orange,
+                        )), // Handle null case
+                    subtitle: Text(
+                      user.phoneNo,
+                      style: appStyle(
+                        color: const Color.fromARGB(255, 218, 137, 16),
+                        fw: FontWeight.w600,
+                        size: 12,
+                      ),
+                    ), // Handle null case
+                  );
+                } else {
+                  return const Text('User data not found');
+                }
+              },
+            ),
           ],
         ),
       ),

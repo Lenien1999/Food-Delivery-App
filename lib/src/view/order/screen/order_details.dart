@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:get/get.dart';
 import 'package:food_delivery_app/core/fire_cloud/db_controller/food_controller.dart';
 import 'package:food_delivery_app/core/fire_cloud/model/order_model.dart';
 import 'package:food_delivery_app/core/widgets/app_extension.dart';
-import 'package:food_delivery_app/src/view/cart_screen/widget/order_user_info.dart';
-import 'package:get/get.dart';
 import 'package:shadow_clip/shadow_clip.dart';
-
 import '../../../../../core/utils/colors.dart';
 import '../../../../../core/utils/helpers.dart';
 import '../../../../core/fire_cloud/auth/auth_controller/user_data_mixin.dart';
+import '../../cart_screen/widget/user_info._order.dart';
 import '../../foods/widget/custom_triangle.dart';
 
 class OrderDetails extends StatefulWidget {
@@ -27,7 +26,6 @@ class _OrderDetailsState extends State<OrderDetails> with UserDataMixin {
   @override
   void initState() {
     super.initState();
-    // Simulate a delay to show the loading indicator
     Future.delayed(const Duration(seconds: 2), () {
       setState(() {
         _isLoading = false;
@@ -40,8 +38,8 @@ class _OrderDetailsState extends State<OrderDetails> with UserDataMixin {
     return Scaffold(
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : GetBuilder<FoodDbController>(builder: (controller) {
-              return SingleChildScrollView(
+          : GetBuilder<FoodDbController>(
+              builder: (controller) => SingleChildScrollView(
                 child: Column(
                   children: [
                     Stack(
@@ -62,8 +60,8 @@ class _OrderDetailsState extends State<OrderDetails> with UserDataMixin {
                     ),
                   ],
                 ),
-              );
-            }),
+              ),
+            ),
     );
   }
 
@@ -103,7 +101,6 @@ class _OrderDetailsState extends State<OrderDetails> with UserDataMixin {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Star Ratings
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -128,8 +125,6 @@ class _OrderDetailsState extends State<OrderDetails> with UserDataMixin {
                             )
                           ],
                         ),
-                        // Price information
-
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
@@ -233,8 +228,6 @@ class _OrderDetailsState extends State<OrderDetails> with UserDataMixin {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        // Display additional food items
-
                         Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: Wrap(
@@ -295,7 +288,7 @@ class _OrderDetailsState extends State<OrderDetails> with UserDataMixin {
                                         ],
                                       ).fadeAnimation(0.6),
                                     )
-                                  : const SizedBox(); // Return an empty SizedBox for items with quantity 0
+                                  : const SizedBox();
                             }).toList(),
                           ),
                         )
@@ -304,9 +297,10 @@ class _OrderDetailsState extends State<OrderDetails> with UserDataMixin {
                   const SizedBox(
                     height: 15,
                   ),
-                  OrderUserInfo(
+                  OrderUserInfoOrder(
                     cafe: widget.order.cafeteria,
                     address: widget.order.address,
+                    user:widget.order.userId,
                   ),
                   Container(
                     height: 60,
@@ -327,179 +321,180 @@ class _OrderDetailsState extends State<OrderDetails> with UserDataMixin {
                       ),
                     ),
                   ),
-                  if (widget.order.status == OrderStatus.enRoute)
-                    Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: InkWell(
-                              onTap: () {
-                                controller.markOrderAsDelivered(widget.order);
-                              },
-                              child: Container(
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  color: AppColor.orange,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    'Delivered',
-                                    style: appStyle(
-                                        color: Colors.white,
-                                        size: 14,
-                                        fw: FontWeight.bold),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: InkWell(
-                              onTap: () {
-                                controller.markOrderAsCancelled(widget.order);
-                              },
-                              child: Container(
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  border:
-                                      Border.all(color: AppColor.placeholder),
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    'Cancel',
-                                    style: appStyle(
-                                        color: AppColor.orange,
-                                        size: 14,
-                                        fw: FontWeight.bold),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  if (widget.order.status == OrderStatus.received &&
-                      userdata!.email.contains('cafeteria'))
-                    Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: InkWell(
-                              onTap: () {
-                                widget.order.status == OrderStatus.enRoute
-                                    ? controller
-                                        .markOrderAsDelivered(widget.order)
-                                    : controller
-                                        .markOrderAsEnroute(widget.order);
-                              },
-                              child: Container(
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  color: AppColor.orange,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    widget.order.status == OrderStatus.enRoute
-                                        ? 'Delivered'
-                                        : 'Confirmed',
-                                    style: appStyle(
-                                        color: Colors.white,
-                                        size: 14,
-                                        fw: FontWeight.bold),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: InkWell(
-                              onTap: () {
-                                controller.markOrderAsCancelled(widget.order);
-                              },
-                              child: Container(
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  border:
-                                      Border.all(color: AppColor.placeholder),
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    'Cancel',
-                                    style: appStyle(
-                                        color: AppColor.orange,
-                                        size: 14,
-                                        fw: FontWeight.bold),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  if (widget.order.status == OrderStatus.cancelled &&
-                      userdata!.email.contains('cafeteria'))
-                    Center(
-                      child: Container(
-                        height: 60,
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        decoration: BoxDecoration(
-                          color: Colors.redAccent,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Cancelled',
-                            style: appStyle(
-                                color: Colors.white,
-                                size: 16,
-                                fw: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                    ),
-                  if (widget.order.status == OrderStatus.delivered &&
-                      userdata!.email.contains('cafeteria'))
-                    Center(
-                      child: Container(
-                        height: 60,
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        decoration: BoxDecoration(
-                          color: Colors.green,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Delievered',
-                            style: appStyle(
-                                color: Colors.white,
-                                size: 16,
-                                fw: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                    ),
+                  _buildOrderButtons(context, controller),
                 ],
               ),
             ).fadeAnimation(0.8),
           ),
           customizeFav().fadeAnimation(0.4),
         ],
+      ),
+    );
+  }
+
+  Widget _buildOrderButtons(BuildContext context, FoodDbController controller) {
+    if (widget.order.status == OrderStatus.enRoute) {
+      // Display buttons for order status 'enRoute'
+      return _buildOrderButtonRow(
+        context,
+        controller,
+        'Delivered',
+        'Cancel',
+        Colors.orange,
+      );
+    } else if (widget.order.status == OrderStatus.received &&
+        userdata!.email.contains('cafeteria')) {
+      // Display buttons for order status 'received' and user is cafeteria
+      return _buildOrderButtonRow(
+        context,
+        controller,
+        'Confirmed',
+        'Cancel',
+        Colors.orange,
+      );
+    } else if (widget.order.status == OrderStatus.received &&
+        !userdata!.email.contains('cafeteria')) {
+      // Display button to cancel order for regular users when status is 'received'
+      return _buildCancelButton(context, controller);
+    } else {
+      // Display status text for other cases
+      return _buildStatusText(context);
+    }
+  }
+
+  Widget _buildOrderButtonRow(BuildContext context, FoodDbController controller,
+      String leftButtonText, String rightButtonText, Color buttonColor) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: InkWell(
+              onTap: () {
+                if (widget.order.status == OrderStatus.enRoute) {
+                  controller.markOrderAsDelivered(widget.order);
+                } else {
+                  controller.markOrderAsEnroute(widget.order);
+                }
+              },
+              child: Container(
+                height: 60,
+                decoration: BoxDecoration(
+                  color: buttonColor,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(
+                  child: Text(
+                    leftButtonText,
+                    style: appStyle(
+                      color: Colors.white,
+                      size: 14,
+                      fw: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Expanded(
+            child: InkWell(
+              onTap: () {
+                controller.markOrderAsCancelled(widget.order);
+              },
+              child: Container(
+                height: 60,
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppColor.placeholder),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(
+                  child: Text(
+                    rightButtonText,
+                    style: appStyle(
+                      color: buttonColor,
+                      size: 14,
+                      fw: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCancelButton(BuildContext context, FoodDbController controller) {
+    // Display cancel button for regular users when status is 'received'
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: InkWell(
+        onTap: () {
+          controller.markOrderAsCancelled(widget.order);
+        },
+        child: Container(
+          height: 60,
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColor.placeholder),
+            color: AppColor.orange,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Center(
+            child: Text(
+              'Cancel Order',
+              style: appStyle(
+                color: Colors.white,
+                size: 14,
+                fw: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatusText(BuildContext context) {
+    // Display status text for other cases (e.g., 'cancelled', 'delivered')
+    String statusText = '';
+    Color statusColor = Colors.white;
+
+    switch (widget.order.status) {
+      case OrderStatus.cancelled:
+        statusText = 'Cancelled';
+        statusColor = Colors.redAccent;
+        break;
+      case OrderStatus.delivered:
+        statusText = 'Delivered';
+        statusColor = Colors.green;
+        break;
+      default:
+        statusText = 'Status Unavailable';
+    }
+
+    return Center(
+      child: Container(
+        height: 60,
+        width: MediaQuery.of(context).size.width * 0.8,
+        decoration: BoxDecoration(
+          color: statusColor,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Center(
+          child: Text(
+            statusText,
+            style: appStyle(
+              color: Colors.white,
+              size: 16,
+              fw: FontWeight.bold,
+            ),
+          ),
+        ),
       ),
     );
   }
